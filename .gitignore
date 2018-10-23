@@ -32,7 +32,6 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
-
 raws/
 preprocessed/
 pure_mixed/
