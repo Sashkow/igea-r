@@ -1,0 +1,103 @@
+Diagnosis	Gestational.Age.Category	accession	Biological.Specimen	Array.Data.File	Gestational.Age	trim
+124	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594064_PE_8_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+125	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594063_PE_7_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+126	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594062_PE_6_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+127	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594061_PE_5_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+128	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594060_PE_4_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+129	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594059_PE_3_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+130	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594058_PE_2_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+131	Severe Pre-Eclampsia	Late Preterm	E-GEOD-24129	Chorion	GSM594057_PE_1_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+132	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594056_FGR_8_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+133	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594055_FGR_7_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+134	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594054_FGR_6_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+135	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594053_FGR_5_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+136	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594052_FGR_4_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+137	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594051_FGR_3_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+138	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594050_FGR_2_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+139	Fetal Growth Retardation	Term	E-GEOD-24129	Chorion	GSM594049_FGR_1_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+140	Healthy	Term	E-GEOD-24129	Chorion	GSM594048_Cont_8_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+141	Healthy	Term	E-GEOD-24129	Chorion	GSM594047_Cont_7_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+142	Healthy	Term	E-GEOD-24129	Chorion	GSM594046_Cont_6_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+143	Healthy	Term	E-GEOD-24129	Chorion	GSM594045_Cont_5_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+144	Healthy	Term	E-GEOD-24129	Chorion	GSM594044_Cont_4_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+145	Healthy	Term	E-GEOD-24129	Chorion	GSM594043_Cont_3_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+146	Healthy	Term	E-GEOD-24129	Chorion	GSM594042_Cont_2_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+147	Healthy	Term	E-GEOD-24129	Chorion	GSM594041_Cont_1_HuGene-1_0-st-v1_.CEL	_	Third Trimester
+685	Pre-Eclampsia	Late Preterm	E-GEOD-6573	Placenta	GSM151959.CEL	33	Third Trimester
+686	Healthy	Term	E-GEOD-6573	Placenta	GSM151958.CEL	39	Third Trimester
+689	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892024_Q9.CEL	_	Third Trimester
+690	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892023_Q8.CEL	36	Third Trimester
+691	Pre-Eclampsia	Early Preterm	E-GEOD-73374	Placenta	GSM1892022_Q6.CEL	28	Third Trimester
+692	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892021_Q5.CEL	37	Third Trimester
+693	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892020_Q4.CEL	35	Third Trimester
+694	Pre-Eclampsia	Early Preterm	E-GEOD-73374	Placenta	GSM1892019_Q20.CEL	27	Third Trimester
+695	Pre-Eclampsia	Term	E-GEOD-73374	Placenta	GSM1892018_Q2.CEL	40	Third Trimester
+696	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892017_Q19.CEL	32	Third Trimester
+697	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892016_Q18.CEL	36	Third Trimester
+698	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892015_Q17.CEL	30	Third Trimester
+699	Pre-Eclampsia	Term	E-GEOD-73374	Placenta	GSM1892014_Q16.CEL	40	Third Trimester
+700	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892013_Q15.CEL	30	Third Trimester
+701	Pre-Eclampsia	Early Preterm	E-GEOD-73374	Placenta	GSM1892012_Q14.CEL	27	Third Trimester
+702	Pre-Eclampsia	Early Preterm	E-GEOD-73374	Placenta	GSM1892011_Q13.CEL	22	Third Trimester
+703	Pre-Eclampsia	Early Preterm	E-GEOD-73374	Placenta	GSM1892010_Q12.CEL	29	Third Trimester
+704	Pre-Eclampsia	Term	E-GEOD-73374	Placenta	GSM1892009_Q11.CEL	38	Third Trimester
+705	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1892008_Q1.CEL	34	Third Trimester
+706	Healthy	Late Preterm	E-GEOD-73374	Placenta	GSM1892007_P9.CEL	36	Third Trimester
+707	Healthy	Late Preterm	E-GEOD-73374	Placenta	GSM1892006_P6.CEL	35	Third Trimester
+708	Healthy	Term	E-GEOD-73374	Placenta	GSM1892005_P5.CEL	40	Third Trimester
+709	Healthy	Term	E-GEOD-73374	Placenta	GSM1892004_P4.CEL	40	Third Trimester
+710	Healthy	Term	E-GEOD-73374	Placenta	GSM1892003_P20.CEL	38	Third Trimester
+711	Healthy	Term	E-GEOD-73374	Placenta	GSM1892002_P2.CEL	40	Third Trimester
+712	Healthy	Term	E-GEOD-73374	Placenta	GSM1892001_P19.CEL	38	Third Trimester
+713	Healthy	Term	E-GEOD-73374	Placenta	GSM1892000_P18.CEL	41	Third Trimester
+714	Healthy	Late Preterm	E-GEOD-73374	Placenta	GSM1891999_P17.CEL	37	Third Trimester
+715	Healthy	Late Preterm	E-GEOD-73374	Placenta	GSM1891998_P16.CEL	36	Third Trimester
+716	Healthy	Term	E-GEOD-73374	Placenta	GSM1891997_P15.CEL	40	Third Trimester
+717	Healthy	Late Preterm	E-GEOD-73374	Placenta	GSM1891996_P14.CEL	36	Third Trimester
+718	Healthy	Term	E-GEOD-73374	Placenta	GSM1891995_P12.CEL	40	Third Trimester
+719	Healthy	Term	E-GEOD-73374	Placenta	GSM1891994_P11.CEL	39	Third Trimester
+720	Healthy	Term	E-GEOD-73374	Placenta	GSM1891993_P10.CEL	40	Third Trimester
+721	Healthy	Term	E-GEOD-73374	Placenta	GSM1891992_P1.CEL	41	Third Trimester
+722	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1891991_Q7.CEL	33	Third Trimester
+723	Pre-Eclampsia	Late Preterm	E-GEOD-73374	Placenta	GSM1891990_Q10.CEL	34	Third Trimester
+724	Healthy	Term	E-GEOD-73374	Placenta	GSM1891989_P13.CEL	39	Third Trimester
+727	Healthy	Term	E-GEOD-73685	Chorion	GSM1900948_4384_40465_8503CHRN_HuGene1.0st.CEL	_	Third Trimester
+730	Healthy	Term	E-GEOD-73685	Placenta	GSM1900945_4384_40462_8502PSRN_HuGene1.0st.CEL	_	Third Trimester
+733	Healthy	Term	E-GEOD-73685	Chorion	GSM1900942_4384_40459_8502CHRN_HuGene1.0st.CEL	_	Third Trimester
+740	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900935_4384_40453_5650CHRN_HuGene1.0st.CEL	_	Third Trimester
+745	Healthy	Term	E-GEOD-73685	Placenta	GSM1900930_4384_40448_5648PSRN_HuGene1.0st.CEL	_	Third Trimester
+747	Healthy	Term	E-GEOD-73685	Chorion	GSM1900928_4384_40446_5648CHRN_HuGene1.0st.CEL	_	Third Trimester
+752	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900923_4384_40441_5647PSRN_HuGene1.0st.CEL	_	Third Trimester
+762	Healthy	Term	E-GEOD-73685	Placenta	GSM1900913_4384_40431_5627PSRN_HuGene1.0st.CEL	_	Third Trimester
+775	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900900_4384_40418_5548PSRN_HuGene1.0st.CEL	_	Third Trimester
+787	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900888_4384_40406_5539CHRN_HuGene1.0st.CEL	_	Third Trimester
+793	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900882_4384_40400_5537CHRN_HuGene1.0st.CEL	_	Third Trimester
+798	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900877_4384_40395_5535PSRN_HuGene1.0st.CEL	_	Third Trimester
+801	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900874_4384_40392_5535CHRN_HuGene1.0st.CEL	_	Third Trimester
+804	Healthy	Term	E-GEOD-73685	Placenta	GSM1900871_4384_40389_5534PSRN_HuGene1.0st.CEL	_	Third Trimester
+806	Healthy	Term	E-GEOD-73685	Chorion	GSM1900869_4384_40387_5534CHRN_HuGene1.0st.CEL	_	Third Trimester
+811	Healthy	Term	E-GEOD-73685	Placenta	GSM1900864_4384_40382_5531PSRN_HuGene1.0st.CEL	_	Third Trimester
+814	Healthy	Term	E-GEOD-73685	Chorion	GSM1900861_4384_40379_5531CHRN_HuGene1.0st.CEL	_	Third Trimester
+821	Healthy	Term	E-GEOD-73685	Chorion	GSM1900854_4384_40372_5524CHRN_HuGene1.0st.CEL	_	Third Trimester
+828	Healthy	Term	E-GEOD-73685	Chorion	GSM1900847_4384_40365_5523CHRN_HuGene1.0st.CEL	_	Third Trimester
+833	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900842_4384_40360_5520PSRN_HuGene1.0st.CEL	_	Third Trimester
+840	Healthy	Term	E-GEOD-73685	Placenta	GSM1900835_4384_40353_5517PSRN_HuGene1.0st.CEL	_	Third Trimester
+843	Healthy	Term	E-GEOD-73685	Chorion	GSM1900832_4384_40350_5517CHRN_HuGene1.0st.CEL	_	Third Trimester
+848	Healthy	Term	E-GEOD-73685	Placenta	GSM1900827_4384_40345_5512PSRN_HuGene1.0st.CEL	_	Third Trimester
+851	Healthy	Term	E-GEOD-73685	Chorion	GSM1900824_4384_40342_5512CHRN_HuGene1.0st.CEL	_	Third Trimester
+863	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900812_4384_40330_2513PSRN_HuGene1.0st.CEL	_	Third Trimester
+865	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900810_4384_40328_2512CHRN_HuGene1.0st.CEL	_	Third Trimester
+868	Healthy	Term	E-GEOD-73685	Placenta	GSM1900807_4384_40325_2510PSRN_HuGene1.0st.CEL	_	Third Trimester
+871	Healthy	Term	E-GEOD-73685	Chorion	GSM1900804_4384_40322_2510CHRN_HuGene1.0st.CEL	_	Third Trimester
+874	Healthy	Term	E-GEOD-73685	Placenta	GSM1900801_4384_40319_2509PSRN_HuGene1.0st.CEL	_	Third Trimester
+882	Healthy	Term	E-GEOD-73685	Placenta	GSM1900793_4384_40311_2507PSRN_HuGene1.0st.CEL	_	Third Trimester
+885	Healthy	Term	E-GEOD-73685	Placenta	GSM1900790_4384_40308_2506PSRN_HuGene1.0st.CEL	_	Third Trimester
+888	Healthy	Term	E-GEOD-73685	Chorion	GSM1900787_4384_40305_2506CHRN_HuGene1.0st.CEL	_	Third Trimester
+891	Healthy	Term	E-GEOD-73685	Placenta	GSM1900784_4384_40302_2505PSRN_HuGene1.0st.CEL	_	Third Trimester
+893	Healthy	Late Preterm	E-GEOD-73685	Placenta	GSM1900782_4384_40300_2504PSRN_HuGene1.0st.CEL	_	Third Trimester
+896	Healthy	Late Preterm	E-GEOD-73685	Chorion	GSM1900779_4384_40297_2504CHRN_HuGene1.0st.CEL	_	Third Trimester
+905	Healthy	Term	E-GEOD-73685	Chorion	GSM1900770_4384_40288_2502CHRN_HuGene1.0st.CEL	_	Third Trimester
+958	Healthy	Term	E-GEOD-9984	Placenta	GSM252359.CEL	_	Third Trimester
+960	Healthy	Term	E-GEOD-9984	Placenta	GSM252358.CEL	_	Third Trimester
+962	Healthy	Term	E-GEOD-9984	Placenta	GSM252360.CEL	_	Third Trimester
+968	Healthy	Term	E-GEOD-9984	Placenta	GSM252357.CEL	_	Third Trimester

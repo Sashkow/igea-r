@@ -1,0 +1,15 @@
+Diagnosis	Gestational.Age.Category	accession	Biological.Specimen	Array.Data.File	Gestational.Age	trim
+61	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320290.CEL	40	First Trimester
+62	Healthy	Second Trimester	E-GEOD-12767	Chorion	GSM320293.CEL	_	Second Trimester
+64	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320291.CEL	39.2	First Trimester
+65	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320289.CEL	39.2	First Trimester
+66	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320285.CEL	38.1	First Trimester
+67	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320286.CEL	40.9	First Trimester
+70	Healthy	Second Trimester	E-GEOD-12767	Chorion	GSM320287.CEL	_	Second Trimester
+71	Healthy	First Trimester	E-GEOD-12767	Chorion	GSM320282.CEL	41.3	First Trimester
+293	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880871_3APL_PP0905_HG-U133_Plus_2_.CEL	8.5	First Trimester
+294	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880870_3UNT_PP0901_HG-U133_Plus_2_.CEL	8.5	First Trimester
+295	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880869_2APL_PP0912_HG-U133_Plus_2_.CEL	8.1	First Trimester
+296	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880868_2UNT_PP0907_HG-U133_Plus_2_.CEL	8.1	First Trimester
+297	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880867_1APL_PP0909_HG-U133_Plus_2_.CEL	8	First Trimester
+298	Healthy	First Trimester	E-GEOD-36083	Chorion	GSM880866_1UNT_PP0903_HG-U133_Plus_2_.CEL	8	First Trimester

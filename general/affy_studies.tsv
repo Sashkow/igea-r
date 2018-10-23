@@ -1,0 +1,9 @@
+ID	accession	secondaryaccession	platform	platformAbbr
+1	E-GEOD-14722	GSE14722	Affymetrix GeneChip Human Genome HG-U133B [HG-U133B]	hgu133a
+3	E-GEOD-9984	GSE9984	Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2]	hgu133plus2
+6	E-GEOD-24129	GSE24129	Affymetrix GeneChip Human Gene 1.0 ST Array [HuGene-1_0-st-v1]	hugene10st
+7	E-GEOD-12767	GSE12767	Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2]	hgu133plus2
+8	E-GEOD-6573	GSE6573	Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2]	hgu133plus2
+9	E-GEOD-36083	GSE36083	Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2]	hgu133plus2
+10	E-GEOD-73374	GSE73374	[HuGene-2_0-st] Affymetrix Human Gene 2.0 ST Array [transcript (gene) version]	hugene20st
+11	E-GEOD-37901	GSE37901	Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2]	hgu133plus2

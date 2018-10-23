@@ -1,0 +1,10 @@
+ID,accession,secondaryaccession,platform,platformAbbr,martPlatformAbbr,processingSoft
+1,1,E-GEOD-14722,GSE14722,Affymetrix GeneChip Human Genome HG-U133B [HG-U133B],hgu133a,affy_hg_u133a,affy
+2,2,E-GEOD-9984,GSE9984,Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2],hgu133plus2,affy_hg_u133_plus_2,affy
+3,3,E-GEOD-24129,GSE24129,Affymetrix GeneChip Human Gene 1.0 ST Array [HuGene-1_0-st-v1],hugene10st,affy_hugene_1_0_st_v1,affy
+4,4,E-GEOD-12767,GSE12767,Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2],hgu133plus2,affy_hg_u133_plus_2,affy
+5,5,E-GEOD-6573,GSE6573,Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2],hgu133plus2,affy_hg_u133_plus_2,affy
+6,6,E-GEOD-36083,GSE36083,Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2],hgu133plus2,affy_hg_u133_plus_2,affy
+7,7,E-GEOD-73374,GSE73374,[HuGene-2_0-st] Affymetrix Human Gene 2.0 ST Array [transcript (gene) version],hugene20st,affy_hugene_2_0_st_v1,oligo 
+8,8,E-GEOD-37901,GSE37901,Affymetrix GeneChip Human Genome U133 Plus 2.0 [HG-U133_Plus_2],hgu133plus2,affy_hg_u133_plus_2,affy
+9,9,E-GEOD-73685,GSE73685,Affymetrix GeneChip Human Gene 1.0 ST Array [HuGene-1_0-st-v1],hugene10st,affy_hugene_1_0_st_v1,affy

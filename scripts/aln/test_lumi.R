@@ -1,0 +1,12 @@
+data(example.lumi)
+View(example.lumi)
+fd = featureData(example.lumi)
+View(fd@varMetadata)
+View(fd@data)
+
+biocLite("illuminaHumanv4.db")
+library(illuminaHumanv4.db)
+probeids = rownames(merged_samples)
+columns(illuminaHumanv4.db)
+probeids_entrezids = select(illuminaHumanv4.db, probeids, "ENTREZID")
+View(probeids_entrezids)

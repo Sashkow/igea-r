@@ -1,0 +1,16 @@
+,,,,,,,Single-cell RNA-seq reveals the diversity of trophoblast subtypes and patterns of differentiation in the human placenta
+P1,decidual cell,"DKK1, IGFBP1, PRL",,,HLA-A,,
+P2,endothelial cell,"CD34, PLVAP, CDH5, ICAM1","vascular, lot fetal, few maternal",,,,
+P3,vascular smooth muscle cell,"MYH11, CNN1",,,,,
+P4,stromal cell,ECM1,Villous stromal,,,,VIM and HLA-A
+P5,multiplets,"CD14, CSF1R (encoding CD115), CD53,  AIF1; CD163, CD209","  Macophage-like, fetal","THY1 (encoding CD90), collagen genes, (COL3A1 and COL1A1), and VIM",,,
+P7,hofbauer cell,,,,,"HLA-DP,
+HLA-DQ, HLA-DR",
+P6,dendritic cell,"CD14, CD52, CD83",maternal,,,,
+P8,t cell,"CD3G, GZMA",maternal and fetal lymphocytes,,,,
+P9,erythrocyte,"HBA1, HBB, HBG1, ALAS2",maternal  fetal hhemoglobyne ,,,,
+P10,Extravillous trophoblast,"PAPPA2, HLA-G,",trophoblastic,EVTBs,,,
+P11,Cytotrophoblast,"PARP1,",,VCTBs,,,
+P12,Syncytiotrophoblast,"CGA, CYP19A1, CGA, GH2",,SCTBs,,,
+P13,B cell,,,,,,
+P14,Monocyte,,,,,,
