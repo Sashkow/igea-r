@@ -1,8 +1,10 @@
 #healthy chorion
-a = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_data/healthy_choiron/entrez_data.tsv")
+a = read.table("/home/sashkoah/a/r/igea-r/healthy_diff_lists_2019/Placenta__First_Trimester__Third_Trimester", sep = '\t', quote='"')
 
-b = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_data/healthy_choiron/entrez_literature.tsv")
+b = read.table("/home/sashkoah/a/r/igea-r/differential_expression_from_literature/GSE9984/1_3_trim_healthy_placenta.csv", sep=",", quote='"')
 
+nrow(a)
+nrow(b)
 a = as.character(a$V1)
 b = as.character(b$V1)
 

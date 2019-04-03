@@ -2,13 +2,13 @@
 # 
 # pd = sub_pdata
 # exprs = sub_exprs
-
+# /home/sashkoah/a/r/igea-r/differential_expression_from_data/lumiaffy/trims_healthy
 nrow(sub_pdata)
 ncol(sub_exprs)
 
 
 
-colnames(sub_exprs) == pd$Array.Data.File
+colnames(sub_exprs) == sub_pdata$Array.Data.File
 
 
 # unipd$accession
@@ -17,6 +17,7 @@ colnames(sub_exprs) == pd$Array.Data.File
 # exprs = read.table(paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix.tsv", sep=""), sep="\t", header=TRUE, row.names = 1 )
 
 write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
+
 sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
 propercolnames = as.character(make.names(sub_pdata$Array.Data.File))
 
@@ -31,11 +32,6 @@ write.table(sub_pdata, "sub_pd.tsv", sep="\t", quote=FALSE)
 
 
 
-# age = as.data.frame(pd$Gestational.Age.Category)
-# as.character(pd$Gestational.Age.Category)
-# pd$trim = with(pd, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
-# pd$trim
-
 # differential expression analysis
 
 # colnames(fit_mod)
@@ -43,6 +39,8 @@ write.table(sub_pdata, "sub_pd.tsv", sep="\t", quote=FALSE)
 # check1 = makeContrasts(b-a, levels=fit_mod)
 # check2 = makeContrasts(a-b, levels=fit_mod)
 # contrast.matrix = check2
+
+
 
 # contrast.matrix <- makeContrasts(b-a,c-b,c-a, levels=fit_mod)
 
@@ -67,24 +65,24 @@ d = t
 
 nrow(d)
 d$adj.P.Val
-d = d[d$adj.P.Val<.4,]
+d = d[d$adj.P.Val<.05,]
 nrow(d)
 
-diff = d[abs(d$logFC)>1.5,]
+diff = d[abs(d$logFC)>2,]
 nrow(diff)
-diff = d
 library(org.Hs.eg.db)
 sel = AnnotationDbi::select(org.Hs.eg.db, rownames(diff), c("SYMBOL","GENENAME"))
 nrow(sel)
-
+sel
 
 specimen = levels(sub_pdata$Biological.Specimen)[1]
 
 trims = str_replace_all(paste(levels(as.factor(sub_pdata$trim)), collapse = '__'), ' ', '_')
 filename = paste(specimen,trims, sep='__')
-
-write.table(sel, file.path('healthy_diff_lists',filename), sep = '\t', quote=FALSE)
-
+filename
+write.table(sel, file.path('healthy_diff_lists_2019',filename), sep = '\t', quote=TRUE)
+nrow(sel)
+read.table(file.path('healthy_diff_lists_2019',filename), sep = '\t', quote='"')
 
 # write.table(diff, "/home/sashkoah/a/r/article-microarrays/diff12.tsv", sep="\t", quote=FALSE)
 

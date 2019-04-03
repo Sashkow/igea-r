@@ -1,6 +1,24 @@
 # Load packages
 library(illuminaHumanv4.db)
 library(lumi)
+
+# BiocManager::install("lumi")
+
+
+# BiocManager::install("limma")
+# BiocManager::install("sva")
+# BiocManager::install("stringr") 
+# BiocManager::install("ggplot2")
+# BiocManager::install("ggfortify")
+# BiocManager::install("cowplot")
+# BiocManager::install("affy")
+# BiocManager::install("ArrayExpress")
+# BiocManager::install("illuminaHumanv4.db")
+# BiocManager::install("illuminaHumanv2.db", version = "3.8")
+# BiocManager::install("WGCNA")
+BiocManager::install("RAM")
+
+
 library(limma)
 library(sva)
 library(stringr) 
@@ -9,7 +27,9 @@ library(ggfortify)
 library(cowplot)
 library(affy)
 library(ArrayExpress)
-setwd('/home/sashkoah/a/r/article-microarrays')
+library(illuminaHumanv2.db)
+setwd('/home/sashkoah/a/r/igea-r')
+
 getwd()
 
 rawspath = 'raws/illumina'
@@ -21,7 +41,7 @@ plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
 
 
 # Load studies description
-studies <- read.table("general/illumina_placenta_studies.tsv", header = TRUE, sep = "\t")
+studies <- read.table("general/illumina_placenta_studies.tsv", header = TRUE, sep = ",")
 
 # load IGEA phenodata
 igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
@@ -31,13 +51,14 @@ for (array in levels(studies$platformAbbr)){
   install.brainarray(array)
 }
 
-biocLite("illuminaHumanWGDASLv3.db")
-
+BiocManager::install("illuminaHumanWGDASLv3.db")
+library(illuminaHumanWGDASLv3.db)
 # i = 1 two
 # i = 2 not mrna
-i = 1
+i = 3
 
 current_path = paste(rawspath, '/', studies$accession[[i]], sep='')
+
 if (! dir.exists(current_path)){
   dir.create(current_path, recursive = TRUE)
 }
@@ -55,9 +76,9 @@ aeData$path
 
 # readPhenoData() will not work unles you rename column
 # Derived Array Data File into Array Data File
-(.*?)\t "$1"\t
-
-"\t([^"]*?)\n "\t"$1"\n
+# (.*?)\t "$1"\t
+# 
+# "\t([^"]*?)\n "\t"$1"\n
 
 library(readr)
 sdrf <- read_file(paste(current_path, aeData$sdrf, sep='/'))
@@ -87,6 +108,80 @@ batch1 = pd[pd$Array.Design.REF == 'A-GEOD-10558',]
 batch2 = pd[pd$Array.Design.REF == 'A-MEXP-1173',]
 pd = batch1
 nrow(batch2)
+
+# map probes to engrez gene identifiers in exprs
+
+install.packages("BiocManager")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+
+# source(paste(getwd(),'scripts/install.brainarray.R',sep='/'))
+# annotationfiles = install.brainarray(studies$platformAbbr[[i]])
+# library(annotationfiles[3], character.only=TRUE)
+# file.db = get(annotationfiles[3])
+
+file.db
+
+# hugene10sthsentrezg.db
+# s= select(get(annotationdb), keys(get(annotationdb))[1:10], columns(get(annotationdb)))
+# keys(get(annotationdb))[1:10]
+rownames(exprs)
+
+t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
+
+t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
+
+
+probeset_ids = as.character(rownames(exprs))
+length(probeset_ids)
+
+# select 1:1 mapping of exprs's probeid onto entrezid
+# annotation <- AnnotationDbi::select(file.db, rownames(exprs), "ENTREZID")
+
+annotation <- AnnotationDbi::select(file.db, probeset_ids, "ENTREZID")
+
+nrow(annotation)
+nrow(exprs)
+
+# remove probes that map onto NA entrez id
+annotation = annotation[!is.na(annotation$ENTREZID),]
+
+# remove rows that are not annotated with entrezid
+exprs = exprs[rownames(exprs) %in% annotation$PROBEID,]
+
+# check entrezid is unique
+length(unique(annotation$ENTREZID)) == length(annotation$ENTREZID)
+FALSE %in% (rownames(exprs) == annotation$PROBEID)
+
+assertthat::are_equal(nrow(annotation), nrow(exprs))
+
+rownames(exprs) = annotation$ENTREZID
+
+
+
+write.table(exprs, paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix_no_adipose.tsv", sep=""), sep="\t", quote=FALSE)
+
+# read.table("general/affymetrix_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # source(paste(getwd(),'/scripts/merge_lumi_tables.R',sep=''))

@@ -1,12 +1,18 @@
 library(sva)
-setwd('/home/sashkoah/a/r/article-microarrays')
+setwd('/home/sashkoah/a/r/igea-r')
 
-path = 'preprocessed/affymetrix/E-GEOD-14722_preprocessed_affymetrix.tsv'
-pathA = 'preprocessed/affymetrix/ab/E-GEOD-14722_preprocessed_affymetrixA.tsv'
-pathB = 'preprocessed/affymetrix/ab/E-GEOD-14722_preprocessed_affymetrixB.tsv'
+# path = 'preprocessed/affymetrix/E-GEOD-14722_preprocessed_affymetrix.tsv'
+# pathA = 'preprocessed/affymetrix/ab/E-GEOD-14722_preprocessed_affymetrixA.tsv'
+# pathB = 'preprocessed/affymetrix/ab/E-GEOD-14722_preprocessed_affymetrixB.tsv'
+
+# path = 'preprocessed/affymetrix/E-GEOD-14722_preprocessed_affymetrix.tsv'
+pathA = 'preprocessed/illumina/1_2/E-GEOD-60438_preprocessed_illumina_1.tsv'
+pathB = 'preprocessed/illumina/1_2/E-GEOD-60438_preprocessed_illumina_2.tsv'
 
 
-exprs = read.table(path, header = TRUE, sep = '\t')
+
+
+# exprs = read.table(path, header = TRUE, sep = '\t')
 exprsA = read.table(pathA, header = TRUE, sep = '\t')
 exprsB = read.table(pathB, header = TRUE, sep = '\t')
 
@@ -15,6 +21,8 @@ exprsB$group = 'B'
 
 ab = intersect(rownames(exprsA), rownames(exprsB))
 ab
+nrow(exprsA)
+nrow(exprsB)
 length(ab)
 
 a.remove = exprsA[!rownames(exprsA) %in% ab, ]

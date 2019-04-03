@@ -1,10 +1,22 @@
 # Load HuGene and hgu133 BrainArray packages
 source("https://bioconductor.org/biocLite.R")
-# biocLite("BiocUpgrade")
+biocLite("BiocUpgrade")
+BiocManager::install("erer")
 
+# BiocManager::install("affycoretools")
+  # 
+  # BiocManager::install("sva")
+  # BiocManager::install("stringr")
+  # BiocManager::install("ggplot2")
+  # BiocManager::install("ggfortify")
+  # BiocManager::install("affy") 
+  # BiocManager::install("ArrayExpress")
+  # BiocManager::install("arrayQualityMetrics")
+  # BiocManager::install("httr")
+  # BiocManager::install("AnnotationDbi")
 
-# library(org.Hs.eg.db)
-
+library(org.Hs.eg.db)
+library(hugene10sthsentrezgcdf)
 library(affycoretools)
 library(sva)
 library(stringr)
@@ -43,7 +55,9 @@ igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
 #   install.brainarray(array)
 # }
 
-i = 7
+i = 9
+studies[9,]
+
 
 
 
@@ -210,6 +224,17 @@ arrayQualityMetrics::arrayQualityMetrics(
   force = TRUE,
   intgroup = 'Scan.Date'
 )
+sub_pdata$arraydatafile_exprscolumnnames
+
+f <- function(sub_pdata) {
+  if (sub_pdata[3]=='E-GEOD-60438'){
+    return(paste(sub_pdata[3],sub_pdata[9]))
+  } else {
+    return(sub_pdata[3])
+  }
+}
+
+sub_pdata$temp = apply(sub_pdata, 1, f)
 
 # library(biomaRt)
 # mart <- useMart('ensembl', dataset="hsapiens_gene_ensembl")
@@ -244,6 +269,8 @@ length(probeset_ids)
 # annotation <- AnnotationDbi::select(file.db, rownames(exprs), "ENTREZID")
 
 annotation <- AnnotationDbi::select(file.db, probeset_ids, "ENTREZID")
+
+
 
 nrow(annotation)
 nrow(exprs)
