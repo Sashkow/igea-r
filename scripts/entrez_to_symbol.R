@@ -1,4 +1,5 @@
 library(org.Hs.eg.db)
+setwd('/home/sashkoah/a/r/igea-r/pure_mixed/igea-cibersort-python')
 setwd('/home/sashkoah/a/r/article-microarrays/pure_mixed')
 filename = 'exprs_healthy_all.tsv'
 mixtures = read.csv(filename, sep='\t')

@@ -1,13 +1,12 @@
-# BiocManager::install("rgl")
+BiocManager::install("Rtsne")
+library(Rtsne)
 library(affy) 
 library(ArrayExpress)
 library(arrayQualityMetrics)
 library(sva)
-  library(limma)
+library(limma)
 library(stringr)
-
 library(RColorBrewer)
-
 library(factoextra)
 
 setwd('/home/sashkoah/a/r/igea-r')
@@ -15,13 +14,12 @@ source(paste(getwd(),'scripts/plots.R',sep='/'))
 plotsqcpath = paste(getwd(), 'plots/qc/illumina', sep='/')
 
 
+# read merged expression data and metadata created with unite.R
 mrgd = NULL
 pdata = NULL
 mrgd = read.table(file.path("temp", "mrgd.tsv"), sep="\t", header=TRUE)
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 
-colnames(pdata)
-pdata$arraydatafile_exprscolumnnames
 columns = c('Diagnosis',
             'Gestational.Age.Category',
             'accession',
@@ -30,13 +28,14 @@ columns = c('Diagnosis',
             'Gestational.Age', 
             "exprs_column_names",
             "platform_batch",
-            "arraydatafile_exprscolumnnames",
+            "arraydatafile_exprscolumnnames", # column with expression data sample names
             "Fetus.Sex",
             "Gravidity",
             "Parity",
             "medical_sample_name",
             "Caesarean.Section")
 
+# align metadata in pdata and expression data in mrgd so that rows in pdata match cols in mrgd
 pdata = pdata[,columns]
 pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
 propercolnames = as.character(make.names(pdata$Array.Data.File))
@@ -45,39 +44,34 @@ propercolnames
 colnames(mrgd) = as.character(colnames(mrgd))
 propercolnames
 mrgd = mrgd[,propercolnames]
-
+# check correctness
 colnames(mrgd) == propercolnames
 colnames(mrgd) == rownames(pdata)
-colnames(mrgd)
 
+
+# write columnames of expression data in mgrd to Array.Data.File in pdata for backwards compatability
 pdata$Array.Data.File = colnames(mrgd)
 pdata$Biological.Specimen
 
+
+# remove technical batch effect caused by different datasets 
 batch = as.factor(pdata$accession)
-
-batch
-as.factor(pdata$Diagnosis)
-mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
-# mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
-
-# exprs=mrgd
+# mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
+mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
+exprs=mrgd
 exprs = ComBat(dat=as.matrix(mrgd), batch=batch, mod=mod, par.prior=TRUE, prior.plots=TRUE)
 
-pdata$trim = with(pdata, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm" | Gestational.Age.Category == "Early Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
 
+# set trim: First Trimester, Second Trimester, Third Trimester
+pdata$trim = with(pdata, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm" | Gestational.Age.Category == "Early Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
 sub_pdata = pdata
 nrow(pdata)
 sub_exprs = exprs
-# 
-pdata$trim
-pdata$Biological.Specimen
-
 
 
 # sub_pdata$is_outlier = FALSE
 # sub_pdata[which(sub_pdata$arraydatafile_exprscolumnnames %in% outlier_elements),]$is_outlier = TRUE
-pdata$trim
-pdata$Biological.Specimen
+
 sub_pdata = pdata[which(pdata$Diagnosis=="Healthy"),]
 # sub_pdata = pdata[which(pdata$Diagnosis=="Healthy" & 
 #                           pdata$trim=='Third Trimester' & 
@@ -103,23 +97,6 @@ as.data.frame(table(sub_pdata$accession))[all_studies$accession,]
 source('scripts/diff_exp.R')
 
 
-# for (level in levels(sub_pdata$Biological.Specimen)){
-#   sub_pdata = pdata[which(pdata$Diagnosis=='Healthy' & pdata$Biological.Specimen=='Chorion' & 
-#                       (pdata$trim=='First Trimester' | pdata$trim=='Second Trimester')),]
-#   
-#   write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
-#   sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
-# 
-#   propercolnames = as.character(make.names(sub_pdata$Array.Data.File))
-#   
-#   # sub_exprs = exprs
-#   colnames(sub_exprs) = as.character(colnames(sub_exprs))
-#   sub_exprs = sub_exprs[,propercolnames]
-#   colnames(sub_exprs) == propercolnames
-#   
-#   # sort of takes sub_pdata and sub_exprs as inputs
-#   source('scripts/diff_exp.R')
-# }
 
 
 # sub_pdata = pdata[which((pdata$Gestational.Age.Category == 'Term' | pdata$Gestational.Age.Category == 'Early Preterm' | pdata$Gestational.Age.Category == 'Late Preterm') & (pdata$Biological.Specimen=='Placenta' | pdata$Biological.Specimen=='Chorion')), ]
@@ -162,7 +139,13 @@ source(paste(getwd(),'scripts/plots.R',sep='/'))
 
 pca = prcomp(t(sub_exprs))
 
-re = kmeans(pca$x, centers = 2, iter.max = 1000, nstart = 1, trace=FALSE)
+summary(pca)
+length(levels(sub_pdata$Biological.Specimen))
+re = kmeans(pca$x[,1:68],
+            centers = length(levels(sub_pdata$Biological.Specimen))+1,
+            iter.max = 1000,
+            nstart = 1,
+            trace=FALSE)
 
 # re = kmeans(as.matrix(t(exprs)), centers = 3, iter.max = 1000, nstart = 1, trace=FALSE)
 re$size
@@ -229,9 +212,11 @@ pl = fviz_pca_ind(pca, axes = c(1,2),
                       # habillage=sub_pdata$Biological.Specimen,
                       repel = TRUE,
                       title = "GEOD-60438 and GEOD-73685",
+                      palette = "Set3",
                       # addEllipses = TRUE,
+                  
                    
-) + geom_point(aes(colour=sub_pdata$temp), size=2)
+) + geom_point(aes(colour=as.character(sub_pdata$cluster)), size=2)
 pl
 
 summary(pca)
@@ -240,8 +225,23 @@ library(rgl)
 
 levels(sub_pdata$Biological.Specimen)
 length(levels(sub_pdata$Gestational.Age.Category))
-plot3d(pca$x[,1:3], col=rainbow(length(levels(sub_pdata$temp)))[factor(as.integer(sub_pdata$temp))], size=10)
-legend3d("topright", legend = levels(sub_pdata$temp), pch = 16, col = rainbow(length(levels(sub_pdata$temp))), cex=1, inset=c(0.02))
+sub_pdata$temp = as.factor(sub_pdata$temp)
+sub_pdata$cluster = as.factor(sub_pdata$cluster)
+
+plot3d(pca$x[,1:3], col=rainbow(length(levels(sub_pdata$cluster)))[factor(as.integer(sub_pdata$cluster))], size=10)
+legend3d("topright", legend = levels(sub_pdata$cluster), pch = 16, col = rainbow(length(levels(sub_pdata$cluster))), cex=1, inset=c(0.02))
+
+text3d(pc$scores[,1:3],texts=rownames(iris))
+text3d(pc$loadings[,1:3], texts=rownames(pc$loadings), col="red")
+coords <- NULL
+for (i in 1:nrow(pc$loadings)) {
+  coords <- rbind(coords, rbind(c(0,0,0),pc$loadings[i,1:3]))
+}
+lines3d(coords, col="red", lwd=4)
+
+
+
+
 
 plot3d(pca$x[,3:5], col=rainbow(2)[factor(as.integer(sub_pdata$accession))], size=10)
 legend3d("topright", legend = levels(sub_pdata$accession), pch = 16, col = rainbow(2), cex=1, inset=c(0.02))
@@ -265,6 +265,21 @@ symbols = lookUp(as.character(genes), 'org.Hs.eg', 'SYMBOL')
 print(symbols, row.names = FALSE)
 getwd()
 write.table(as.data.frame(genes), file="genes1", row.names = FALSE)
+
+
+
+iris_unique <- unique(iris)
+iris_matrix <- as.matrix(iris_unique[,1:4])
+iris_matrix = t(as.matrix(sub_exprs))
+
+
+# Set a seed if you want reproducible results
+set.seed(42)
+tsne_out <- Rtsne(iris_matrix,perplexity=30,theta=0.0) # Run TSNE
+
+# Show the objects in the 2D tsne representation
+plot(tsne_out$Y, col=sub_pdata$Biological.Specimen)
+
 
 
 # Placenta vs uterus
@@ -371,3 +386,20 @@ sub_pdata$Array.Data.File
 # # 
 
 
+# for (level in levels(sub_pdata$Biological.Specimen)){
+#   sub_pdata = pdata[which(pdata$Diagnosis=='Healthy' & pdata$Biological.Specimen=='Chorion' & 
+#                       (pdata$trim=='First Trimester' | pdata$trim=='Second Trimester')),]
+#   
+#   write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
+#   sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
+# 
+#   propercolnames = as.character(make.names(sub_pdata$Array.Data.File))
+#   
+#   # sub_exprs = exprs
+#   colnames(sub_exprs) = as.character(colnames(sub_exprs))
+#   sub_exprs = sub_exprs[,propercolnames]
+#   colnames(sub_exprs) == propercolnames
+#   
+#   # sort of takes sub_pdata and sub_exprs as inputs
+#   source('scripts/diff_exp.R')
+# }

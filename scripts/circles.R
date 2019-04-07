@@ -65,3 +65,21 @@ group.venn(list(Literature=global_literature,GSE73374=local_literature,  merged_
 #            label=TRUE,
 #            fill = c("orange", "blue"),
 #            lab.cex=1.1)
+
+
+# library(RAM)
+# 
+# 
+# foo <- c('a','b','c','d')
+# baa <- c('a','e','f','g')
+# group.venn(list(foo=foo, baa=baa), label=TRUE,
+#            fill = c("orange", "blue"),
+#            cat.pos = c(0, 0),
+#            lab.cex=1.1)
+# 
+# group.venn(list(chorion_genes=chorion_genes,
+#                 decidua_genes=decidua_genes,
+#                 placenta_genes=placenta_genes),
+#            label=TRUE,
+#            fill = c("orange", "blue"),
+#            lab.cex=1.1)
