@@ -2,19 +2,23 @@
 source("https://bioconductor.org/biocLite.R")
 biocLite("BiocUpgrade")
 BiocManager::install("erer")
+BiocManager::install("affycoretools")
 
-# BiocManager::install("affycoretools")
-  # 
-  # BiocManager::install("sva")
-  # BiocManager::install("stringr")
-  # BiocManager::install("ggplot2")
-  # BiocManager::install("ggfortify")
-  # BiocManager::install("affy") 
-  # BiocManager::install("ArrayExpress")
-  # BiocManager::install("arrayQualityMetrics")
-  # BiocManager::install("httr")
-  # BiocManager::install("AnnotationDbi")
+BiocManager::install("sva")
+BiocManager::install("stringr")
+BiocManager::install("ggplot2")
 
+BiocManager::install("ggfortify")
+
+BiocManager::install("affy")
+
+BiocManager::install("ArrayExpress")
+
+BiocManager::install("arrayQualityMetrics")
+
+BiocManager::install("httr")
+BiocManager::install("cowplot")
+library(ArrayExpress)
 library(org.Hs.eg.db)
 library(hugene10sthsentrezgcdf)
 library(affycoretools)
@@ -25,10 +29,11 @@ library(ggfortify)
 library(affy) 
 library(ArrayExpress)
 library(arrayQualityMetrics)
+library(cowplot)
 library(httr)
 library(AnnotationDbi)
 
-setwd('/home/sashkoah/a/r/article-microarrays')
+setwd('/home/darya/Documents/diploma/igea-r')
 getwd()
 
 source(paste(getwd(),'scripts/plots.R',sep='/'))
@@ -42,7 +47,7 @@ mappedpath = 'mapped/affymetrix'
 protocolpath = 'protocol/affymetrix'
 
 # Load studies description
-studies <- read.table("general/affymetrix_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
+studies <- read.table("general/smoking_affymetrix_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
 studies
 
 
@@ -55,8 +60,7 @@ igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
 #   install.brainarray(array)
 # }
 
-i = 9
-studies[9,]
+i = 1
 
 
 
@@ -72,7 +76,7 @@ if (! dir.exists(current_path)){
 }
 
 current_path
-
+?getAE
 aeData = getAE(
   studies$accession[[i]],
   path = current_path,
@@ -81,14 +85,14 @@ aeData = getAE(
   type = 'raw')
 
 z <- ArrayExpress:::readPhenoData(aeData$sdrf, aeData$path)
-
-z@data$Extract.Name
+z@data$Array.Data.File
 
 # merge ArrayExpress phenodata with IGEA phenodata
 pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
 pd$Gestational.Age.Category
+pd = z@data
+rownames(pd) = as.character(pd$Array.Data.File)
 
-rownames(pd) = as.character(pd$Array.Data.File.y)
 # write.table(pd,"pdata.tsv", sep="\t", quote=FALSE)
 # pd = read.table("pdata.tsv", sep="\t", header=TRUE, row.names = 1)
 
@@ -104,7 +108,6 @@ rownames(pd) = as.character(pd$Array.Data.File.y)
 
 
 nrow(pd)
-
 affyData = ReadAffy(phenoData=pd,
                            sampleNames=pd$Sample.Name,
                            filenames=pd$Array.Data.File.y,
