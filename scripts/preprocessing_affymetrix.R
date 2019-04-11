@@ -17,7 +17,7 @@ BiocManager::install("ArrayExpress")
 BiocManager::install("arrayQualityMetrics")
 
 BiocManager::install("httr")
-BiocManager::install("cowplot")
+BiocManager::install("hgu133plus2hsentrezg.db")
 library(ArrayExpress)
 library(org.Hs.eg.db)
 library(hugene10sthsentrezgcdf)
