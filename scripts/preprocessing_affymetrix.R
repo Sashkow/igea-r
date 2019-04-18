@@ -1,23 +1,24 @@
 # Load HuGene and hgu133 BrainArray packages
-source("https://bioconductor.org/biocLite.R")
-biocLite("BiocUpgrade")
-BiocManager::install("erer")
-BiocManager::install("affycoretools")
-
-BiocManager::install("sva")
-BiocManager::install("stringr")
-BiocManager::install("ggplot2")
-
-BiocManager::install("ggfortify")
-
-BiocManager::install("affy")
-
-BiocManager::install("ArrayExpress")
-
-BiocManager::install("arrayQualityMetrics")
-
-BiocManager::install("httr")
-BiocManager::install("hgu133plus2hsentrezg.db")
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("BiocUpgrade")
+# BiocManager::install("erer")
+# BiocManager::install("affycoretools")
+# 
+# BiocManager::install("sva")
+# BiocManager::install("stringr")
+# BiocManager::install("ggplot2")
+# 
+# BiocManager::install("ggfortify")
+# 
+# BiocManager::install("affy")
+# 
+# BiocManager::install("ArrayExpress")
+# 
+# BiocManager::install("arrayQualityMetrics")
+# 
+# BiocManager::install("factoextra")
+# BiocManager::install("hgu133plus2hsentrezg.db")
+library(factoextra)
 library(ArrayExpress)
 library(org.Hs.eg.db)
 library(hugene10sthsentrezgcdf)
@@ -39,7 +40,7 @@ getwd()
 source(paste(getwd(),'scripts/plots.R',sep='/'))
 
 
-rawspath = 'raws/affymetrix'
+rawspath = 'raws/affymetrix/'
 prepath = 'preprocessed/affymetrix'
 pdatapath = 'pdata/'
 plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
@@ -76,7 +77,7 @@ if (! dir.exists(current_path)){
 }
 
 current_path
-?getAE
+
 aeData = getAE(
   studies$accession[[i]],
   path = current_path,
@@ -88,8 +89,8 @@ z <- ArrayExpress:::readPhenoData(aeData$sdrf, aeData$path)
 z@data$Array.Data.File
 
 # merge ArrayExpress phenodata with IGEA phenodata
-pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
-pd$Gestational.Age.Category
+# pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
+# pd$Gestational.Age.Category
 pd = z@data
 rownames(pd) = as.character(pd$Array.Data.File)
 
@@ -110,8 +111,8 @@ rownames(pd) = as.character(pd$Array.Data.File)
 nrow(pd)
 affyData = ReadAffy(phenoData=pd,
                            sampleNames=pd$Sample.Name,
-                           filenames=pd$Array.Data.File.y,
-                           celfile.path=paste("raws/affymetrix/",
+                           filenames=pd$Array.Data.File,
+                           celfile.path=file.path(rawspath,
                                               studies$accession[[i]],
                                               sep="")
 )
@@ -128,17 +129,15 @@ nrow(exprs(affyData.rma))
 nrow(pd)
 ncol(affyData.rma)
 
-columns = c('Diagnosis', 'Gestational.Age.Category', 'accession', 'Biological.Specimen','Array.Data.File.x')
-pd = pd[,columns]
+# columns = c('Diagnosis', 'Gestational.Age.Category', 'accession', 'Biological.Specimen','Array.Data.File.x')
+# pd = pd[,columns]
 write.table(pd,"pdata.tsv", sep="\t", quote=FALSE)
 pd = read.table("pdata.tsv", sep="\t", header=TRUE)
+pd
+write.table(exprs(affyData.rma), paste(prepath, '/', studies$accession[[i]], "_preprocessed_affymetrix.tsv", sep=""), sep="\t", quote=FALSE)
 
-# write.table(exprs(affyData.rma), paste(prepath, '/', studies$accession[[i]], "_preprocessed_affymetrix.tsv", sep=""), sep="\t", quote=FALSE)-.4
-
-
-exprs = read.table(paste(prepath, '/', studies$accession[[i]], "_preprocessed_affymetrix.tsv", sep=""), sep="\t")
-
-
+savepath = paste(prepath, '/', studies$accession[[i]], "_preprocessed_affymetrix.tsv", sep="")
+exprs = read.table(savepath, sep="\t")
 
 ncol(exprs)
 nrow(pd)
@@ -148,49 +147,83 @@ nrow(pd)
 
 
 # exclude decidua and chorion samples that are too close to maternal blood samples
-exclude = c("GSM1900776_4384_40294_2503CHRN_HuGene1.0st.CEL", "GSM1900833_4384_40351_5517DSRN_HuGene1.0st.CEL",
-  "GSM1900840_4384_40358_5520DSRN_HuGene1.0st.CEL", "GSM1900855_4384_40373_5524DSRN_HuGene1.0st.CEL", 
-  "GSM1900870_4384_40388_5534DSRN_HuGene1.0st.CEL", "GSM1900875_4384_40393_5535DSRN_HuGene1.0st.CEL", 
-  "GSM1900883_4384_40401_5537DSRN_HuGene1.0st.CEL", "GSM1900943_4384_40460_8502DSRN_HuGene1.0st.CEL"
-)
+# exclude = c("GSM1900776_4384_40294_2503CHRN_HuGene1.0st.CEL", "GSM1900833_4384_40351_5517DSRN_HuGene1.0st.CEL",
+#   "GSM1900840_4384_40358_5520DSRN_HuGene1.0st.CEL", "GSM1900855_4384_40373_5524DSRN_HuGene1.0st.CEL", 
+#   "GSM1900870_4384_40388_5534DSRN_HuGene1.0st.CEL", "GSM1900875_4384_40393_5535DSRN_HuGene1.0st.CEL", 
+#   "GSM1900883_4384_40401_5537DSRN_HuGene1.0st.CEL", "GSM1900943_4384_40460_8502DSRN_HuGene1.0st.CEL"
+# )
+# 
+# pd_excluded = pd[which(!(pd$Array.Data.File.x %in% exclude)),]
+# nrow(pd_excluded)
+# 
+# pd_excluded = pd[pd$Biological.Specimen!="Adipose Tissue",]
+# nrow(pd_excluded)
 
-pd_excluded = pd[which(!(pd$Array.Data.File.x %in% exclude)),]
-nrow(pd_excluded)
+# pd_excluded = pd_excluded[which((pd_excluded$Biological.Specimen == "Chorion" |
+#                                   pd_excluded$Biological.Specimen == "Decidua" |
+#                                   pd_excluded$Biological.Specimen == "Placenta") & 
+#                                   pd_excluded$Diagnosis == "Healthy"),]
+# nrow(pd_excluded)
 
-pd_excluded = pd[pd$Biological.Specimen!="Adipose Tissue",]
-nrow(pd_excluded)
-
-pd_excluded = pd_excluded[which((pd_excluded$Biological.Specimen == "Chorion" |
-                                  pd_excluded$Biological.Specimen == "Decidua" |
-                                  pd_excluded$Biological.Specimen == "Placenta") & 
-                                  pd_excluded$Diagnosis == "Healthy"),]
-nrow(pd_excluded)
-
-
-exprs_excluded = exprs
+pd_excluded = pd
 # exprs_excluded = exprs
-ncol(exprs_excluded)
-propercolnames = as.character(make.names(pd_excluded$Array.Data.File))
-colnames(exprs_excluded) = as.character(colnames(exprs_excluded))
-exprs_excluded = exprs_excluded[,propercolnames]
-colnames(exprs_excluded) == propercolnames
+exprs_excluded = exprs
+# ncol(exprs_excluded)
+# propercolnames = as.character(make.names(pd_excluded$Array.Data.File))
+# colnames(exprs_excluded) = as.character(colnames(exprs_excluded))
+# exprs_excluded = exprs_excluded[,propercolnames]
+# colnames(exprs_excluded) == propercolnames
 
 
 
-pca = prcomp(t(as.matrix(exprs_excluded)))
+pca = prcomp(t(as.matrix(exprs)))
 
 
-exprs_excluded = exprs[,rownames(exprs) %in% as.character(pd_excluded$Array.Data.File)]
-ncol(exprs_excluded)
+# exprs_excluded = exprs[,rownames(exprs) %in% as.character(pd_excluded$Array.Data.File)]
+# ncol(exprs_excluded)
+for (i in 1:nrow(pd)){
+  if (grepl("XY",pd[i,"Hybridization.Name"])){
+    pd[i,"Sex"] = "Male"
+  } else {
+    pd[i,"Sex"] = "Female"
+  }
+}
+pd$Sex
 
-pl <- pcaPlots(pca, pd_excluded, c("Biological.Specimen", "Diagnosis", "Gestational.Age.Category"), ncol=2)
+for (i in 1:nrow(pd)){
+  if (grepl("non-smoking",pd[i,"Hybridization.Name"])){
+    pd[i,"Smoking"] = FALSE
+  } else {
+    pd[i,"Smoking"] = TRUE
+  }
+}
+pd$Smoking
+
+pl = fviz_pca_biplot(pca, axes = c(1,2),
+                  label=c("var"),
+                  # habillage=sub_pdata$Biological.Specimen,
+                  repel = TRUE,
+                  title = "GEOD-7434",
+                  # palette = "Set3",
+                  # addEllipses = TRUE,
+                  select.var = list(contrib=15),
+                  
+                  
+) + geom_point(aes(colour=as.character(pd$Smoking), shape = as.character(pd$Sex)), size=3)
 pl
 
 
-dir.create(paste(plotsqcpath,"manual", sep='/'), showWarnings = FALSE)
-save_plot(paste(plotsqcpath, "manual", "85_excluded_chor_dec_pla_healthy.pdf", sep='/'),
-          base_height=5, base_aspect_ratio = pl[[2]], pl[[1]], nrow=2)
 
+# pd
+# pl <- pcaPlots(pca, pd_excluded, c("Hybridization.Name"), ncol=2)
+# pl
+
+
+dir.create(paste(plotsqcpath,"manual", sep='/'), showWarnings = FALSE)
+save_plot(paste(plotsqcpath, "manual", "sokingplacenta7434.png", sep='/'),
+          base_height=5, base_aspect_ratio = pl[[2]], pl[[1]], nrow=2)
+# save_plot(paste(plotsqcpath, "manual", "sokingplacenta7434.png", sep='/'), plot = pl)
+pd$Source.Name
 
 arrayQualityMetrics::arrayQualityMetrics(
   exprs,
@@ -206,7 +239,7 @@ write.table(pd_excluded , paste(prepath, '/', studies$accession[[i]], "_preproce
 exprs = exprs_excluded
 pd = pd_excluded
 
-i = 5
+i = 1
 studies[i,]$accession
 
 # read preprocessed tsf with probesets
@@ -214,30 +247,18 @@ path = paste(prepath, "/", studies$accession[[i]], "_preprocessed_affymetrix.tsv
 exprs = read.table(path, header = TRUE, sep = '\t')
 nrow(exprs)
 ncol(exprs)
-pd = igea[igea$Array.Data.File %in% colnames(exprs),]
-nrow(pd)
-
-
+# pd = igea[igea$Array.Data.File %in% colnames(exprs),]
+# nrow(pd)
 
 eset = ExpressionSet(as.matrix(exprs))
 eset@phenoData = AnnotatedDataFrame(pd)
+
 arrayQualityMetrics::arrayQualityMetrics(
   eset,
   outdir = paste(plotsqcpath,studies$accession[[i]],"scan", sep='/'),
   force = TRUE,
-  intgroup = 'Scan.Date'
+  intgroup = 'Hybridization.Name'
 )
-sub_pdata$arraydatafile_exprscolumnnames
-
-f <- function(sub_pdata) {
-  if (sub_pdata[3]=='E-GEOD-60438'){
-    return(paste(sub_pdata[3],sub_pdata[9]))
-  } else {
-    return(sub_pdata[3])
-  }
-}
-
-sub_pdata$temp = apply(sub_pdata, 1, f)
 
 # library(biomaRt)
 # mart <- useMart('ensembl', dataset="hsapiens_gene_ensembl")
@@ -248,6 +269,11 @@ sub_pdata$temp = apply(sub_pdata, 1, f)
 
 
 # map probes to engrez gene identifiers in exprs
+
+# read preprocessed tsf with probesets
+path = paste(prepath, "/", studies$accession[[i]], "_preprocessed_affymetrix.tsv", sep="")
+exprs = read.table(path, header = TRUE, sep = '\t')
+i=1
 source(paste(getwd(),'scripts/install.brainarray.R',sep='/'))
 annotationfiles = install.brainarray(studies$platformAbbr[[i]])
 library(annotationfiles[3], character.only=TRUE)
@@ -260,9 +286,9 @@ file.db
 # keys(get(annotationdb))[1:10]
 rownames(exprs)
 
-t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
-
-t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
+# t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
+# 
+# t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
 
 
 probeset_ids = as.character(rownames(exprs))
@@ -271,30 +297,27 @@ length(probeset_ids)
   # select 1:1 mapping of exprs's probeid onto entrezid
 # annotation <- AnnotationDbi::select(file.db, rownames(exprs), "ENTREZID")
 
-annotation <- AnnotationDbi::select(file.db, probeset_ids, "ENTREZID")
-
-
+annotation <- AnnotationDbi::select(file.db, probeset_ids, "SYMBOL")
 
 nrow(annotation)
 nrow(exprs)
 
 # remove probes that map onto NA entrez id
-annotation = annotation[!is.na(annotation$ENTREZID),]
+annotation = annotation[!is.na(annotation$SYMBOL),]
 
 # remove rows that are not annotated with entrezid
 exprs = exprs[rownames(exprs) %in% annotation$PROBEID,]
 
 # check entrezid is unique
-length(unique(annotation$ENTREZID)) == length(annotation$ENTREZID)
+length(unique(annotation$SYMBOL)) == length(annotation$SYMBOL)
 FALSE %in% (rownames(exprs) == annotation$PROBEID)
 
 assertthat::are_equal(nrow(annotation), nrow(exprs))
 
-rownames(exprs) = annotation$ENTREZID
+rownames(exprs) = annotation$SYMBOL
+exprs
 
-
-
-write.table(exprs, paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix_no_adipose.tsv", sep=""), sep="\t", quote=FALSE)
+write.table(exprs, paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix.tsv", sep=""), sep="\t", quote=FALSE)
 
 # read.table("general/affymetrix_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
 

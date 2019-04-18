@@ -1,24 +1,33 @@
-library(illuminaHumanv3.db)
+# library(illuminaHumanv3.db)
 library(cowplot)
 library(ggfortify)
 library(beadarray)
 library(arrayQualityMetrics)
 library(sva)
 library(dplyr)
-source("plots_utils.R")
-source("degs_utils.R")
-
+# source("plots_utils.R")
+source("scripts/aln_illumina/degs_utils.R")
+setwd(".")
+getwd()
 ### General variables
 
-studies <- read.table("../pdata/studies.tsv", header = TRUE, sep = "\t")
-
+studies <- read.table("general/smoking_illumina_placenta_studies.tsv", header = TRUE, sep = "\t")
+studies$accession
 ## Choose between cohorts
-i = which(studies$ID=="london")
+# i = which(studies$ID=="london")
 #i = which(studies$ID=="oslo")
 
 ### Read data
-path = paste("../raws/", studies[i,]$ID, sep="")
-pdata = read.table(paste("../pdata/", studies[i,]$ID, "_pdata_untracked.tsv", sep=""), 
+
+rawspath = 'raws/illumina'
+prepath = 'preprocessed/illumina'
+pdatapath = 'pdata/'
+plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
+
+
+path = file.path(rawspath, studies[i,]$accession)
+path
+pdata = read.table(path, 
                    sep="\t", head=TRUE, stringsAsFactors = FALSE)
 raw.data <- readIllumina(dir=path, sampleSheet=paste("../pdata/", studies[i,]$ID, "_pdata_untracked.csv", sep=""),
                      illuminaAnnotation="Humanv3")

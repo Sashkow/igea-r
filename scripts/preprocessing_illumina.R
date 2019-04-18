@@ -1,4 +1,5 @@
 # Load packages
+
 library(illuminaHumanv4.db)
 library(lumi)
 
@@ -7,7 +8,7 @@ library(lumi)
 
 # BiocManager::install("limma")
 # BiocManager::install("sva")
-# BiocManager::install("stringr") 
+# BiocManager::install("stringr")
 # BiocManager::install("ggplot2")
 # BiocManager::install("ggfortify")
 # BiocManager::install("cowplot")
@@ -16,7 +17,7 @@ library(lumi)
 # BiocManager::install("illuminaHumanv4.db")
 # BiocManager::install("illuminaHumanv2.db", version = "3.8")
 # BiocManager::install("WGCNA")
-BiocManager::install("RAM")
+# BiocManager::install("RAM")
 
 
 library(limma)
@@ -28,8 +29,7 @@ library(cowplot)
 library(affy)
 library(ArrayExpress)
 library(illuminaHumanv2.db)
-setwd('/home/sashkoah/a/r/igea-r')
-
+setwd('/home/darya/Documents/diploma/igea-r')
 getwd()
 
 rawspath = 'raws/illumina'
@@ -41,21 +41,20 @@ plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
 
 
 # Load studies description
-studies <- read.table("general/illumina_placenta_studies.tsv", header = TRUE, sep = ",")
-
+studies <- read.table("general/smoking_illumina_placenta_studies.tsv", header = TRUE, sep = "\t")
+studies
+studies$accession
 # load IGEA phenodata
 igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
 
-# install cdf annotation files for all listed microarray platforms
-for (array in levels(studies$platformAbbr)){
-  install.brainarray(array)
-}
+# # install cdf annotation files for all listed microarray platforms
+# for (array in levels(studies$platformAbbr)){
+#   install.brainarray(array)
+# }
 
 BiocManager::install("illuminaHumanWGDASLv3.db")
 library(illuminaHumanWGDASLv3.db)
-# i = 1 two
-# i = 2 not mrna
-i = 3
+i = 1
 
 current_path = paste(rawspath, '/', studies$accession[[i]], sep='')
 
@@ -63,17 +62,17 @@ if (! dir.exists(current_path)){
   dir.create(current_path, recursive = TRUE)
 }
 
-
+studies$accession[[i]]
 aeData = getAE(
   studies$accession[[i]],
   path = current_path,
   sourcedir=current_path,
-  local = TRUE)
-  # type = 'processed')
+  local = FALSE,
+  type = 'raw')
 
-aeData$sdrf
+# aeData$sdrf
 aeData$path
-
+list.files(aeData$path)
 # readPhenoData() will not work unles you rename column
 # Derived Array Data File into Array Data File
 # (.*?)\t "$1"\t
@@ -84,34 +83,34 @@ library(readr)
 sdrf <- read_file(paste(current_path, aeData$sdrf, sep='/'))
 sdrf = read.table(paste(current_path, aeData$sdrf, sep='/'), sep = "\t", quote = '"', header = TRUE)
 sdrf$Array.Data.File
-qsdrf = str_replace(sdrf, 'Derived Array Data File', 'Array Data File')
-write_file(sdrf, paste(current_path, aeData$sdrf, sep='/'))
+# qsdrf = str_replace(sdrf, 'Derived Array Data File', 'Array Data File')
+# write_file(sdrf, paste(current_path, aeData$sdrf, sep='/'))
 
 
 z <- ArrayExpress:::readPhenoData(aeData$sdrf, aeData$path)
-
+z@varMetadata
 # merge ArrayExpress phenodata with IGEA phenodata
-pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
-pd$Array.Data.File
-rownames(pd) = pd$Array.Data.File.x
-pd$Experiment
+# pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
+# pd$Array.Data.File
+pd=z@data
+rownames(pd) = pd$Array.Data.File
+
 
 # write.table(pd, paste(current_path, 'merged_phenodata', sep = '/'))
 
-pd[is.na(pd$Experiment),]$Array.Data.File.x
+# pd[is.na(pd$Experiment),]$Array.Data.File.x
 
 nrow(pd)
 
-
-# batches
-batch1 = pd[pd$Array.Design.REF == 'A-GEOD-10558',]
-batch2 = pd[pd$Array.Design.REF == 'A-MEXP-1173',]
-pd = batch1
-nrow(batch2)
-
+# 
+# # batches
+# batch1 = pd[pd$Array.Design.REF == 'A-GEOD-10558',]
+# batch2 = pd[pd$Array.Design.REF == 'A-MEXP-1173',]
+# pd = batch1
+# nrow(batch2)
+# 
 # map probes to engrez gene identifiers in exprs
 
-install.packages("BiocManager")
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -199,7 +198,7 @@ write.table(exprs, paste(mappedpath, '/', studies$accession[[i]], "_mapped_affym
 # 
 # GSE44711_non-normalized_data.txt
 # GSE30186_non_normalized.txt
-x.lumi <- lumiR(paste(current_path, "GSE60438_non_normalized_HT12v4.txt", sep="/"),
+x.lumi <- lumiR(file.path(current_path, "E-MTAB-6418.sdrf.txt"),
                 sep = "\t", QC=FALSE, columnNameGrepPattern = list(exprs='AVG_Signal', se.exprs='BEAD_STD', detection='Detection', beadNum='Avg_NBEADS'))
 
 ncol(x.lumi) 
