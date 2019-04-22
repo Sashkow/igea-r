@@ -226,15 +226,7 @@ arrayQualityMetrics::arrayQualityMetrics(
 )
 sub_pdata$arraydatafile_exprscolumnnames
 
-f <- function(sub_pdata) {
-  if (sub_pdata[3]=='E-GEOD-60438'){
-    return(paste(sub_pdata[3],sub_pdata[9]))
-  } else {
-    return(sub_pdata[3])
-  }
-}
 
-sub_pdata$temp = apply(sub_pdata, 1, f)
 
 # library(biomaRt)
 # mart <- useMart('ensembl', dataset="hsapiens_gene_ensembl")
@@ -261,6 +253,7 @@ t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_f
 
 t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
 
+exprs = mixtures
 
 probeset_ids = as.character(rownames(exprs))
 length(probeset_ids)

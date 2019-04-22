@@ -102,9 +102,11 @@ pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 ncol(mrgd)
 nrow(pdata)
 
+pdata$Diagnosis=="Healthy"
 pdata = pdata[pdata$Diagnosis == "Healthy",]
 
 # outliers = c("X11761", "X11420", "X11670", "X13497", "X13521", "X14258")
+# yes yes no, yes.., no, yes!
 # pdata = pdata[which((pdata$arraydatafile_exprscolumnnames %in% outliers)| pdata$accession=="E-GEOD-73685"),]
 
 # pdata = pdata[which(pdata$accession=="E-GEOD-73685" &
@@ -124,37 +126,35 @@ pdata = pdata[pdata$Diagnosis == "Healthy",]
 
 # allign expression data in mrgd with metadata in pdata
 mrgd= mrgd[,make.names(pdata$arraydatafile_exprscolumnnames)]
-
 # check colnames in mrgd match col arraydatafile_exprscolumnnames in pdata
 setdiff(colnames(mrgd), make.names(pdata$arraydatafile_exprscolumnnames))
-
+# 
 write.table(pdata,file.path("temp","pdata.tsv"), sep="\t", quote=FALSE)
 write.table(mrgd, file.path("temp", "mrgd.tsv"), sep="\t", quote=FALSE)
-
-
-
+# 
+nrow(mrgd)
 
 
 
 # create Label Classes for CIBERSORT algorigthm for tissue mixture deconvolution
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 pdata$arraydatafile_exprscolumnnames
-
-
+pdata$Expression.Data.ID
 # decidua 1 1 1 1 0 0 0 0 0 
 # blood1  0 0 0 0 1 1 0 0 0
 # blood2  0 0 0 0 0 0 1 1 1
-labels_df = data.frame(row.names = levels(pdata$Biological.Specimen))
+labels_df = data.frame(row.names = levels(as.factor(pdata$Cluster)))
 
 for (tissue in rownames(labels_df)){
-  for (sample in pdata$arraydatafile_exprscolumnnames) {
-    if (pdata[pdata$arraydatafile_exprscolumnnames==sample,]$Biological.Specimen == tissue){
+  for (sample in pdata$Expression.Data.ID) {
+    if (pdata[pdata$Expression.Data.ID==sample,]$Cluster == tissue){
       labels_df[tissue,sample] = 1
     } else {
       labels_df[tissue,sample] = 2
     }
   }
 }
+
 
 labels_df
 colnames(labels_df) == colnames(mrgd)
@@ -164,7 +164,9 @@ decidua_samples_labels_df = colnames(labels_df["Decidua",which(labels_df["Decidu
 decidua_samples_labels_df
 decidua_samples_pdata == decidua_samples_labels_df
 
-write.table(labels_df,file.path("temp","labels.tsv"), sep="\t", quote=FALSE)
+write.table(labels_df,file.path("temp","labels_reference_cell_types_ctb123_evt4_dendric5_excluded6_stb7.tsv"), sep="\t", quote=FALSE)
+
+
 
 
  
@@ -174,3 +176,4 @@ write.table(labels_df,file.path("temp","labels.tsv"), sep="\t", quote=FALSE)
 # 
 # 
 # # end, next ask.R
+
