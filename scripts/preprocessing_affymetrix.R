@@ -17,11 +17,14 @@
 # BiocManager::install("arrayQualityMetrics")
 # 
 # BiocManager::install("factoextra")
-# BiocManager::install("hgu133plus2hsentrezg.db")
+BiocManager::install("hgu133plus2hsentrezg")
+"hgu133plus2.db", version = "3.8"
+
 library(factoextra)
 library(ArrayExpress)
 library(org.Hs.eg.db)
 library(hugene10sthsentrezgcdf)
+library(hgu133plus2hsentrezgcdf)
 library(affycoretools)
 library(sva)
 library(stringr)
@@ -35,12 +38,13 @@ library(httr)
 library(AnnotationDbi)
 
 setwd('/home/darya/Documents/diploma/igea-r')
+setwd('/home/sashkoah/a/r//igea-r')
 getwd()
 
 source(paste(getwd(),'scripts/plots.R',sep='/'))
 
 
-rawspath = 'raws/affymetrix/'
+rawspath = 'raws/affymetrix'
 prepath = 'preprocessed/affymetrix'
 pdatapath = 'pdata/'
 plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
@@ -71,10 +75,11 @@ i = 1
 # i = 6 E-GEOD-36083
 
 
-current_path = paste(rawspath, '/', studies$accession[[i]], sep='')
+current_path = file.path(rawspath, studies$accession[[i]])
 if (! dir.exists(current_path)){
   dir.create(current_path)
 }
+current_path
 
 current_path
 
@@ -225,6 +230,9 @@ save_plot(paste(plotsqcpath, "manual", "sokingplacenta7434.png", sep='/'),
 # save_plot(paste(plotsqcpath, "manual", "sokingplacenta7434.png", sep='/'), plot = pl)
 pd$Source.Name
 
+
+exprs = exprs(affyData)
+pd$
 arrayQualityMetrics::arrayQualityMetrics(
   exprs,
   outdir = paste(plotsqcpath,studies$accession[[i]],"all", sep='/'),
@@ -250,7 +258,7 @@ ncol(exprs)
 # pd = igea[igea$Array.Data.File %in% colnames(exprs),]
 # nrow(pd)
 
-eset = ExpressionSet(as.matrix(exprs))
+eset = ExpressionSet(as.matrix(exprs()))
 eset@phenoData = AnnotatedDataFrame(pd)
 
 arrayQualityMetrics::arrayQualityMetrics(
@@ -259,6 +267,7 @@ arrayQualityMetrics::arrayQualityMetrics(
   force = TRUE,
   intgroup = 'Hybridization.Name'
 )
+
 
 # library(biomaRt)
 # mart <- useMart('ensembl', dataset="hsapiens_gene_ensembl")

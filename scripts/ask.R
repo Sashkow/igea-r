@@ -1,4 +1,4 @@
-BiocManager::install("Rtsne")
+# BiocManager::install("dplyr")
 library(Rtsne)
 library(affy) 
 library(ArrayExpress)
@@ -20,6 +20,13 @@ pdata = NULL
 mrgd = read.table(file.path("temp", "mrgd.tsv"), sep="\t", header=TRUE)
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 
+
+# pdata = read.table(, sep="\t", header=TRUE)
+
+# pdata = read.table(file.path("temp","pdata.csv"), sep=",", header=TRUE)
+pdata$Array.Data.File = pdata$Expression.Data.ID
+
+mrgd
 columns = c('Diagnosis',
             'Gestational.Age.Category',
             'accession',
@@ -38,10 +45,13 @@ columns = c('Diagnosis',
 # align metadata in pdata and expression data in mrgd so that rows in pdata match cols in mrgd
 pdata = pdata[,columns]
 pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
+
 propercolnames = as.character(make.names(pdata$Array.Data.File))
+
 rownames(pdata) = propercolnames
 propercolnames
 colnames(mrgd) = as.character(colnames(mrgd))
+colnames(mrgd)
 propercolnames
 mrgd = mrgd[,propercolnames]
 # check correctness
@@ -56,11 +66,17 @@ pdata$Biological.Specimen
 
 # remove technical batch effect caused by different datasets 
 batch = as.factor(pdata$accession)
-# mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
-mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
-exprs=mrgd
-exprs = ComBat(dat=as.matrix(mrgd), batch=batch, mod=mod, par.prior=TRUE, prior.plots=TRUE)
+batch = as.factor(pdata$Batch)
 
+# mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
+# mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
+mod = model.matrix(~1)
+nrow(mrgd)
+mrgd1 <- mrgd[rowSums(mrgd) > 1, ]
+nrow(mrgd1)
+exprs = ComBat(dat=as.matrix(mrgd1), batch=batch, mod=NULL, par.prior=TRUE, prior.plots=TRUE)
+
+exprs_nopare
 
 # set trim: First Trimester, Second Trimester, Third Trimester
 pdata$trim = with(pdata, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm" | Gestational.Age.Category == "Early Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
@@ -69,10 +85,14 @@ nrow(pdata)
 sub_exprs = exprs
 
 
+
+
 # sub_pdata$is_outlier = FALSE
 # sub_pdata[which(sub_pdata$arraydatafile_exprscolumnnames %in% outlier_elements),]$is_outlier = TRUE
 
 sub_pdata = pdata[which(pdata$Diagnosis=="Healthy"),]
+# sub_pdata = pdata[which(!(pdata$Array.Data.File %in% c("B1_Cell_2", "B1_Cell_5", "B2_Cell_29"))),]
+nrow(sub_pdata)
 # sub_pdata = pdata[which(pdata$Diagnosis=="Healthy" & 
 #                           pdata$trim=='Third Trimester' & 
 #                           pdata$Biological.Specimen!="Umbilical Cord Blood" &
@@ -126,7 +146,12 @@ nrow(sub_pdata[sub_pdata$Diagnosis=='Fetal Growth Retardation',])
 # sub_exprs = sub_exprs[,propercolnames]
 # colnames(sub_exprs) == propercolnames
 # 
+getwd()
 write.table(sub_exprs,"sub_exprs.tsv", sep="\t", quote=FALSE)
+write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
+
+sub_exprs = read.table("sub_exprs.tsv", sep="\t", header=TRUE)
+sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
 
 eset = ExpressionSet(as.matrix(sub_exprs))
 eset@phenoData = AnnotatedDataFrame(sub_pdata)
@@ -138,41 +163,49 @@ source(paste(getwd(),'scripts/plots.R',sep='/'))
 # length(colnames(sub_exprs)==NA)
 
 pca = prcomp(t(sub_exprs))
-
-summary(pca)
-length(levels(sub_pdata$Biological.Specimen))
-re = kmeans(pca$x[,1:68],
-            centers = length(levels(sub_pdata$Biological.Specimen))+1,
-            iter.max = 1000,
-            nstart = 1,
-            trace=FALSE)
-
-# re = kmeans(as.matrix(t(exprs)), centers = 3, iter.max = 1000, nstart = 1, trace=FALSE)
-re$size
-
-re$cluster
-cluster = as.data.frame(re$cluster)
-cluster
-sub_pdata$Array.Data.File = as.character(make.names(sub_pdata$Array.Data.File))
-sub_pdata$Array.Data.File == rownames(cluster)
-
-sub_pdata[,"cluster"] = cluster$`re$cluster`
-
-nrow(pca$x)
-nrow(sub_pdata)
+pca = prcomp(t(sub_exprs[X$SD>800,]))
+pca = prcomp(t(log2(sub_exprs + 1)))
 
 
-f <- function(sub_pdata) {
-  print(sub_pdata)
-  if (sub_pdata[3]=='E-GEOD-60438'){
-    return('Outlier')
-  } else {
-    return(sub_pdata[4])
-  }
-}
+minrows
+#_____________
+# length(levels(sub_pdata$Biological.Specimen))
+# re = kmeans(pca$x[,1:100],
+#             centers = length(levels(sub_pdata$Biological.Specimen))-5,
+#             iter.max = 1000,
+#             nstart = 50,
+#             # trace=FALSE
+#             )
+# re$iter
+# re$ifault
+# # re = kmeans(as.matrix(t(exprs)), centers = 3, iter.max = 1000, nstart = 1, trace=FALSE)
+# re$size
+# re
+# 
+# re$cluster
+# cluster = as.data.frame(re$cluster)
+# cluster
+# sub_pdata$Array.Data.File = as.character(make.names(sub_pdata$Array.Data.File))
+# sub_pdata$Array.Data.File == rownames(cluster)
+# 
+# sub_pdata[,"cluster"] = cluster$`re$cluster`
+# 
+# nrow(pca$x)
+# nrow(sub_pdata)
+#_______________
 
-sub_pdata$temp = apply(sub_pdata, 1, f)
-sub_pdata$temp
+# f <- function(sub_pdata) {
+#   print(sub_pdata)
+#   if (sub_pdata[3]=='E-GEOD-60438'){
+#     return('Outlier')
+#   } else {
+#     return(sub_pdata[4])
+#   }
+# }
+# 
+# sub_pdata$temp = apply(sub_pdata, 1, f)
+# sub_pdata$temp
+
 
 # pl <- pcaPlots(pca, axis(1,2),
 #                sub_pdata,
@@ -207,16 +240,22 @@ sub_pdata$temp
 # s
 # ncol(pca_df)
 
+
+pca = prcomp(t(sub_exprs))
+pca = prcomp(t(sub_exprs[X$SD>800,]))
+pca = prcomp(t(log2(sub_exprs + 1)))
+
+
 pl = fviz_pca_ind(pca, axes = c(1,2),
-                      label=c("var"),
+                      label=c("none"),
                       # habillage=sub_pdata$Biological.Specimen,
-                      repel = TRUE,
+                      # repel = TRUE,
                       title = "GEOD-60438 and GEOD-73685",
                       palette = "Set3",
                       # addEllipses = TRUE,
                   
                    
-) + geom_point(aes(colour=as.character(sub_pdata$cluster)), size=2)
+) + geom_point(aes(colour=as.character(sub_pdata$Cluster)), size=2)
 pl
 
 summary(pca)
@@ -226,10 +265,10 @@ library(rgl)
 levels(sub_pdata$Biological.Specimen)
 length(levels(sub_pdata$Gestational.Age.Category))
 sub_pdata$temp = as.factor(sub_pdata$temp)
-sub_pdata$cluster = as.factor(sub_pdata$cluster)
-
-plot3d(pca$x[,1:3], col=rainbow(length(levels(sub_pdata$cluster)))[factor(as.integer(sub_pdata$cluster))], size=10)
-legend3d("topright", legend = levels(sub_pdata$cluster), pch = 16, col = rainbow(length(levels(sub_pdata$cluster))), cex=1, inset=c(0.02))
+sub_pdata$Cluster = as.factor(sub_pdata$Cluster)
+levels(sub_pdata$Cluster)
+plot3d(pca$x[,1:3], col=rainbow(length(levels(sub_pdata$Cluster)))[factor(as.integer(sub_pdata$Cluster))], size=10)
+legend3d("topright", legend = levels(sub_pdata$Cluster), pch = 16, col = rainbow(length(levels(sub_pdata$Custer))), cex=1, inset=c(0.02))
 
 text3d(pc$scores[,1:3],texts=rownames(iris))
 text3d(pc$loadings[,1:3], texts=rownames(pc$loadings), col="red")
@@ -268,19 +307,22 @@ write.table(as.data.frame(genes), file="genes1", row.names = FALSE)
 
 
 
-iris_unique <- unique(iris)
-iris_matrix <- as.matrix(iris_unique[,1:4])
-iris_matrix = t(as.matrix(sub_exprs))
 
+iris_matrix = t(as.matrix(sub_exprs[X$SD>800,]))
+
+iris_matrix = t(as.matrix(log(sub_exprs+1)))
 
 # Set a seed if you want reproducible results
 set.seed(42)
-tsne_out <- Rtsne(iris_matrix,perplexity=30,theta=0.0) # Run TSNE
+tsne_out <- Rtsne(iris_matrix,perplexity=4,theta=0.0, normalize = FALSE) # Run TSNE
 
 # Show the objects in the 2D tsne representation
-plot(tsne_out$Y, col=sub_pdata$Biological.Specimen)
+plot(tsne_out$Y, col=sub_pdata$Cluster)
 
-
+set.seed(007)
+X <- sub_exprs
+X = transform(X, SD=apply(X,1, sd, na.rm = TRUE))
+nrow(sub_exprs[X$SD>500,])
 
 # Placenta vs uterus
 # 1588
@@ -370,15 +412,18 @@ arrayQualityMetrics::arrayQualityMetrics(
 
 
 #
+# sub_exprs = mrgd
+# sub_pdata = pdata
 eset = ExpressionSet(as.matrix(sub_exprs))
 eset@phenoData = AnnotatedDataFrame(sub_pdata)
 
-
+getwd()
 arrayQualityMetrics::arrayQualityMetrics(
   eset,
-  outdir = "60438",
+  do.logtransform = FALSE,
+  outdir = "cell_types3",
   force = TRUE,
-  intgroup = 'Array.Data.File'
+  intgroup = 'Cluster'
 )
 
 sub_pdata$Array.Data.File
