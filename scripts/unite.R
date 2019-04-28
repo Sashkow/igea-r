@@ -138,6 +138,8 @@ nrow(mrgd)
 
 # create Label Classes for CIBERSORT algorigthm for tissue mixture deconvolution
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
+pdata = read.table("/home/sashkoah/a/r/igea-r/pure_mixed/igea-cibersort-python/cell_types/metadata.csv", sep=',', header = TRUE, stringsAsFactors = FALSE )
+
 pdata$arraydatafile_exprscolumnnames
 pdata$Expression.Data.ID
 # decidua 1 1 1 1 0 0 0 0 0 
@@ -154,6 +156,13 @@ for (tissue in rownames(labels_df)){
     }
   }
 }
+
+excluded = pdata[pdata$Cluster==6,]$Expression.Data.ID
+excluded
+labels_df[,excluded] = 0
+labels_df[,excluded]
+
+labels_df = labels_df[which(!(rownames(labels_df) %in% c(6))),]
 
 
 labels_df

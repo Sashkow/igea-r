@@ -1,8 +1,7 @@
-ID	accession	secondaryaccession	platform
-1	E-GEOD-60438	GSE60438	Illumina HumanWG-6 v3.0 Expression BeadChip
-2	E-GEOD-35574	GSE35574	Illumina Human-6 v2 Expression BeadChip
-3	E-GEOD-54618	GSE54618	Illumina HumanHT-12 V4.0 expression beadchip
-4	E-GEOD-44711	GSE44711	Illumina HumanHT-12 V4.0 expression beadchip
-5	E-GEOD-30186	GSE30186	Illumina HumanHT-12 V4.0 expression beadchip
-
-
+ID,accession,secondaryaccession,platform
+1,E-GEOD-60438,GSE60438,Illumina HumanWG-6 v3.0 Expression BeadChip
+1,E-GEOD-60438,GSE60438,Illumina HumanHT-12 V4.0 expression beadchip
+2,E-GEOD-35574,GSE35574,Illumina Human-6 v2 Expression BeadChip
+3,E-GEOD-54618,GSE54618,Illumina HumanHT-12 V4.0 expression beadchip
+4,E-GEOD-44711,GSE44711,Illumina HumanHT-12 V4.0 expression beadchip
+5,E-GEOD-30186,GSE30186,Illumina HumanHT-12 V4.0 expression beadchip

@@ -1,4 +1,4 @@
-# BiocManager::install("dplyr")
+# BiocManager::install("preprocessCore")
 library(Rtsne)
 library(affy) 
 library(ArrayExpress)
@@ -8,6 +8,11 @@ library(limma)
 library(stringr)
 library(RColorBrewer)
 library(factoextra)
+library(preprocessCore)
+
+
+
+
 
 setwd('/home/sashkoah/a/r/igea-r')
 source(paste(getwd(),'scripts/plots.R',sep='/'))
@@ -20,6 +25,7 @@ pdata = NULL
 mrgd = read.table(file.path("temp", "mrgd.tsv"), sep="\t", header=TRUE)
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 
+rownames(mrgd)
 # pdata = read.table(, sep="\t", header=TRUE)
 
 # pdata = read.table(file.path("temp","pdata.csv"), sep=",", header=TRUE)
@@ -42,8 +48,8 @@ columns = c('Diagnosis',
             "Caesarean.Section")
 
 # align metadata in pdata and expression data in mrgd so that rows in pdata match cols in mrgd
-pdata = pdata[,columns]
-pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
+# pdata = pdata[,columns]
+# pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
 
 propercolnames = as.character(make.names(pdata$Array.Data.File))
 
@@ -67,6 +73,8 @@ pdata$Biological.Specimen
 batch = as.factor(pdata$accession)
 batch = as.factor(pdata$Batch)
 
+
+rownames(mrgd)
 # mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
 # mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
 mod = model.matrix(~1)
@@ -77,12 +85,12 @@ exprs = ComBat(dat=as.matrix(mrgd1), batch=batch, mod=NULL, par.prior=TRUE, prio
 
 exprs_nopare
 
+exprs = mrgd
 # set trim: First Trimester, Second Trimester, Third Trimester
 pdata$trim = with(pdata, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm" | Gestational.Age.Category == "Early Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
 sub_pdata = pdata
 nrow(pdata)
 sub_exprs = exprs
-
 
 
 
@@ -163,7 +171,6 @@ pca = prcomp(t(sub_exprs[X$SD>800,]))
 pca = prcomp(t(log2(sub_exprs + 1)))
 
 
-
 #_____________
 # length(levels(sub_pdata$Biological.Specimen))
 # re = kmeans(pca$x[,1:100],
@@ -236,11 +243,25 @@ pca = prcomp(t(log2(sub_exprs + 1)))
 # s
 # ncol(pca_df)
 
+rownames(sub_exprs)
 
 pca = prcomp(t(sub_exprs))
 pca = prcomp(t(sub_exprs[X$SD>800,]))
 pca = prcomp(t(log2(sub_exprs + 1)))
+pca = prcomp(t(normalize.quantiles(as.matrix(sub_exprs))))
 
+
+normm = as.data.frame(normalize.quantiles(as.matrix(sub_exprs)))
+
+colnames(normm) = colnames(sub_exprs)
+rownames(normm) = rownames(sub_exprs)
+
+normm = normm[rowSums(normm)>1,]
+lognorm = log(normm + 1)
+
+pca = prcomp(t(lognormm))
+
+summary(pca)
 
 pl = fviz_pca_ind(pca, axes = c(1,2),
                       label=c("none"),
@@ -251,7 +272,8 @@ pl = fviz_pca_ind(pca, axes = c(1,2),
                       # addEllipses = TRUE,
                   
                    
-) + geom_point(aes(colour=as.character(sub_pdata$Cluster)), size=2)
+) 
+# + geom_point(aes(colour=as.character(sub_pdata$Cluster)), size=2)
 pl
 
 summary(pca)
@@ -410,20 +432,22 @@ arrayQualityMetrics::arrayQualityMetrics(
 #
 # sub_exprs = mrgd
 # sub_pdata = pdata
-eset = ExpressionSet(as.matrix(log(sub_exprs+1)))
+sub_exprs = lognorm
+rownames(sub_exprs)
+# eset = ExpressionSet(as.matrix(log(sub_exprs+1)))
+eset = ExpressionSet(as.matrix(sub_exprs))
 eset@phenoData = AnnotatedDataFrame(sub_pdata)
 
 getwd()
 arrayQualityMetrics::arrayQualityMetrics(
   eset,
-  outdir = "cell_types2",
+  outdir = "cell_types_log_norm",
   force = TRUE,
   intgroup = 'Cluster'
 )
 
-sub_pdata$Array.Data.File
-# # 
-# # 
+write.table(sub_exprs,file.path("temp","re_exprs.tsv"), sep="\t", quote=FALSE)
+
 
 
 # for (level in levels(sub_pdata$Biological.Specimen)){
