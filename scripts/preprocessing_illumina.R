@@ -15,11 +15,11 @@ library(lumi)
 # BiocManager::install("affy")
 # BiocManager::install("ArrayExpress")
 # BiocManager::install("illuminaHumanv4.db")
-# BiocManager::install("illuminaHumanv2.db", version = "3.8")
+# BiocManager::install("illuminaHumanv2.db")
 # BiocManager::install("WGCNA")
 # BiocManager::install("RAM")
-
-
+# BiocManager::install("WGCNA")
+library(WGCNA)
 library(limma)
 library(sva)
 library(stringr) 
@@ -29,7 +29,7 @@ library(cowplot)
 library(affy)
 library(ArrayExpress)
 library(illuminaHumanv2.db)
-setwd('/home/darya/Documents/diploma/igea-r')
+setwd('/home/sashkoah/a/r/igea-r')
 getwd()
 
 rawspath = 'raws/illumina'
@@ -45,16 +45,17 @@ studies <- read.table("general/smoking_illumina_placenta_studies.tsv", header = 
 studies
 studies$accession
 # load IGEA phenodata
-igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
+igea = read.table('igea_tsv/samples.tsv', header = TRUE, sep = '\t', fill = TRUE)
 
 # # install cdf annotation files for all listed microarray platforms
 # for (array in levels(studies$platformAbbr)){
 #   install.brainarray(array)
 # }
 
-BiocManager::install("illuminaHumanWGDASLv3.db")
+# BiocManager::install("illuminaHumanWGDASLv3.db")
 library(illuminaHumanWGDASLv3.db)
 i = 1
+
 
 current_path = paste(rawspath, '/', studies$accession[[i]], sep='')
 
@@ -67,8 +68,9 @@ aeData = getAE(
   studies$accession[[i]],
   path = current_path,
   sourcedir=current_path,
-  local = FALSE,
-  type = 'raw')
+  local = TRUE,
+  type = "raw")
+
 
 # aeData$sdrf
 aeData$path
@@ -80,27 +82,33 @@ list.files(aeData$path)
 # "\t([^"]*?)\n "\t"$1"\n
 
 library(readr)
-sdrf <- read_file(paste(current_path, aeData$sdrf, sep='/'))
+# sdrf <- read_file(paste(current_path, aeData$sdrf, sep='/'))
 sdrf = read.table(paste(current_path, aeData$sdrf, sep='/'), sep = "\t", quote = '"', header = TRUE)
-sdrf$Array.Data.File
+
 # qsdrf = str_replace(sdrf, 'Derived Array Data File', 'Array Data File')
-# write_file(sdrf, paste(current_path, aeData$sdrf, sep='/'))
+# write_file(qsdrf, paste(current_path, aeData$sdrf, sep='/'))
 
 
 z <- ArrayExpress:::readPhenoData(aeData$sdrf, aeData$path)
 z@varMetadata
+z@data
+
 # merge ArrayExpress phenodata with IGEA phenodata
 # pd = merge(z@data, igea, all.x = TRUE, by.x = 'Source.Name', by.y = 'Sample.Name')
 # pd$Array.Data.File
 pd=z@data
-rownames(pd) = pd$Array.Data.File
+rownames(pd)
+# rownames(pd) = pd$Array.Data.File
 
+# rbind()
 
-# write.table(pd, paste(current_path, 'merged_phenodata', sep = '/'))
-
+write.table(pd, paste(current_path, 'merged_phenodata', sep = '/'))
+current_path
 # pd[is.na(pd$Experiment),]$Array.Data.File.x
 
 nrow(pd)
+
+pdata_file_name
 
 # 
 # # batches
@@ -126,6 +134,7 @@ file.db
 # hugene10sthsentrezg.db
 # s= select(get(annotationdb), keys(get(annotationdb))[1:10], columns(get(annotationdb)))
 # keys(get(annotationdb))[1:10]
+
 rownames(exprs)
 
 t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
@@ -231,39 +240,103 @@ arrayQualityMetrics::arrayQualityMetrics(
 )
 
 
-# 
-# 
+
+# current_path
 # files = list.files(current_path, pattern = "*sample_table.txt")
-# 
+# length(files)
+# read.ilmn()
 # x = read.ilmn(paste(current_path, files[1], sep='/'))
-# 
-# arrayQualityMetrics::arrayQualityMetrics(eset)
-# 
-# x.lumi <- lumiQ(eset)
-# 
-# 
-# 
-# x.lumi <- x.lumi[, -which(grepl("replicate", colnames(x.lumi)))]
-# # Normalize
-# lumi.T <- lumiT(x.lumi, method = 'log2')
-# lumi.N<-lumiN(lumi.T, method = "quantile")
+
+studies
+
+library(GEOquery)
+
+eset = getGEO('GSE27272')
+eset = getGEO('GSE18044')
+eset_general = eset 
+eset = eset_general$GSE18044_series_matrix.txt.gz
+eset
+
+
+# sub_exprs = exprs(eset)
+sub_pdata = pData(eset)
+sub_pdata
+
+
+sub_exprs = read.table("/home/sashkoah/a/r/igea-r/preprocessed/illumina/GSE18044/GSE18044_QN.csv", sep = ',', quote = '"', header = TRUE, row.names = "X")
+sub_pdata = read.table("/home/sashkoah/a/r/igea-r/preprocessed/illumina/GSE18044/GSE18044_preprocessed_pdata.tsv", sep = '\t', quote = '"', header = TRUE)
+
+pca = prcomp(t(sub_exprs))
+summary(pca)
+library(factoextra)
+
+pl = fviz_pca_ind(pca, axes = c(1,2),
+                  label=c("none"),
+                  # habillage=sub_pdata$secondaryaccession,
+                  # repel = TRUE,
+                  title = "E-GEOD-7434 and E-GEOD-27272",
+                  palette = "Set4"
+                  # addEllipses = TRUE,
+                  # col.ind = sub_pdata$evt5,
+                  # gradient.cols = rainbow(3)
+                  
+                  
+) 
+pl
+
+View(pdata)
+studies
+sub_pdata$`status:ch1`
+arrayQualityMetrics::arrayQualityMetrics(lumi.N, outdir = '/home/sashkoah/a/r/igea-r/smoking_3_norm',
+                                          intgroup = "status:ch1",
+                                         do.logtransform = FALSE,
+                                         force=TRUE)
+colnames(pdata)
+current_path
+prepath
+
+i=3
+studies[i,]$secondaryaccession
+
+exprs_file_name = paste(studies[i,]$secondaryaccession,"preprocessed_exprs.tsv", sep = "_")
+pdata_file_name = paste(studies[i,]$secondaryaccession,"preprocessed_pdata.tsv", sep = "_")
+exprs_path = file.path(prepath,studies[i,]$secondaryaccession)
+if (! dir.exists(exprs_path)){
+  dir.create(exprs_path, recursive = TRUE)
+}
+write.table(sub_exprs, file.path(exprs_path,exprs_file_name), sep = "\t", quote = FALSE)
+write.table(sub_pdata, file.path(exprs_path,pdata_file_name), sep = "\t", quote = FALSE)
+
+
+
+x.lumi <- lumiQ(eset)
+
+grepl("relicate",colnames(x.lumi))
+
+# Normalize
+
+lumi.T <- lumiT(x.lumi, method = 'log2')
+lumi.N<-lumiN(lumi.T, method = "quantile")
+colnames(lumi.N)
+sub_exprs = exprs(lumi.N)
+sub_pdata = pData(lumi.N)
 # colnames(lumi.N) <- pd@data$SampleAccessionNumber
-# # Save results into file
-# write.table(exprs(lumi.N), paste("../preprocessed/", studies[i,]$ID, "_preprocessed_illumina.tsv", sep=""),
-#             sep="\t", quote=FALSE)
-# 
-# # Add phenoData to ExpressionSet object
-# lumi.N@phenoData = pd
-# # Perform PCA and plot
-# pca = prcomp(t(exprs(lumi.N)))
-# title <- ggdraw() + draw_label(studies[i,]$ID, fontface='bold')  
-# pl <- autoplot(pca, data = pData(lumi.N), colour="CancerType")
-# pl <- plot_grid(title, pl, ncol=1, rel_heights=c(0.1, 1))
-# 
-# # Save plot for manual quality control
-# save_plot(paste("../plots/qc/", studies[i,]$ID, "_PCA.pdf", sep=""),
-#           pl)
-# 
-# #probesetsID <- rownames(exprs(lumi.N))
-# #probesetsID_EntrezID<-select(get(paste(studies[i,]$platformAbbr, ".db", sep="")), probesetsID, "ENTREZID")
-# 
+# Save results into file
+write.table(exprs(lumi.N), paste("../preprocessed/", studies[i,]$ID, "_preprocessed_illumina.tsv", sep=""),
+            sep="\t", quote=FALSE)
+
+# Add phenoData to ExpressionSet object
+lumi.N@phenoData = pd
+# Perform PCA and plot
+pca = prcomp(t(exprs(lumi.N)))
+title <- ggdraw() + draw_label(studies[i,]$ID, fontface='bold')
+pl <- autoplot(pca, data = pData(lumi.N), colour="CancerType")
+pl <- plot_grid(title, pl, ncol=1, rel_heights=c(0.1, 1))
+
+# Save plot for manual quality control
+save_plot(paste("../plots/qc/", studies[i,]$ID, "_PCA.pdf", sep=""),
+          pl)
+
+#probesetsID <- rownames(exprs(lumi.N))
+#probesetsID_EntrezID<-select(get(paste(studies[i,]$platformAbbr, ".db", sep="")), probesetsID, "ENTREZID")
+

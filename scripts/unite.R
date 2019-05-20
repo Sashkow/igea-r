@@ -8,11 +8,15 @@ library(sva)
 library(limma)
 library(stats)
 
+
+
+
+
 source(paste(getwd(),'scripts/plots.R',sep='/'))
 
 setwd('/home/sashkoah/a/r/igea-r')
 getwd()
-source('scripts/addon.R')
+# source('scripts/addon.R')
 
 
 microarray_platform = 'illumina'
@@ -46,14 +50,16 @@ all_studies
 # load sample metadata from csv.file from IGEA database which is based on ArrayExpress data mostly
 igea = read.table('igea_tsv/samples.csv',header = TRUE, sep = ',', fill = TRUE)
 
+
 decidua_exps = unique(igea[igea$Biological.Specimen=="Decidua",]$accession)
 
 # get list of gene expression matrix files
 exprs_files = list.files(mappedpath)
 exprs_files
-mrgd=NULL
+
 mrgd = read.table(paste(mappedpath, exprs_files[1], sep = '/'), header = TRUE, sep = '\t')
 
+nrow(mrgd)
 exprs_files[1]
 
 # read first expression matrix
@@ -91,8 +97,16 @@ for (i in 1:nrow(igea)) {
 new_column
 igea$arraydatafile_exprscolumnnames = new_column
 
+
 # get sample metadata only for expression data in mrgd
 pdata = igea[make.names(igea$arraydatafile_exprscolumnnames) %in% colnames(mrgd),]
+nrow(pdata)
+
+
+pdata = read.table("/home/sashkoah/a/r/igea-r/mapped/smoking/pdata.csv", sep="\t", header=TRUE)
+
+pdata$Array.Data.File
+
 # read-write metadata to elliminate unneeded factor levels
 write.table(pdata,file.path("temp","pdata.tsv"), sep="\t", quote=FALSE)
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
@@ -102,7 +116,9 @@ pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 ncol(mrgd)
 nrow(pdata)
 
-pdata = pdata[pdata$Diagnosis == "Healthy",]
+pdata = pdata[which(pdata$Diagnosis == "Healthy"),]
+pdata = pdata[which(pdata$tissue.ch1 == "placenta"),]
+pdata$tissue.ch1
 
 # outliers = c("X11761", "X11420", "X11670", "X13497", "X13521", "X14258")
 # pdata = pdata[which((pdata$arraydatafile_exprscolumnnames %in% outliers)| pdata$accession=="E-GEOD-73685"),]
@@ -123,13 +139,18 @@ pdata = pdata[pdata$Diagnosis == "Healthy",]
 # ,]
 
 # allign expression data in mrgd with metadata in pdata
-mrgd= mrgd[,make.names(pdata$arraydatafile_exprscolumnnames)]
+# mrgd= mrgd[,make.names(pdata$arraydatafile_exprscolumnnames)]
+mrgd = mrgd[,make.names(pdata$Array.Data.File)]
 
+pdata$Array.Data.File
+colnames(mrgd)
 # check colnames in mrgd match col arraydatafile_exprscolumnnames in pdata
 setdiff(colnames(mrgd), make.names(pdata$arraydatafile_exprscolumnnames))
 
 write.table(pdata,file.path("temp","pdata.tsv"), sep="\t", quote=FALSE)
 write.table(mrgd, file.path("temp", "mrgd.tsv"), sep="\t", quote=FALSE)
+nrow(pdata)
+ncol(mrgd)
 
 
 

@@ -14,8 +14,18 @@ group.venn(list(Literature=b,  Data=a), label=FALSE,
            cat.cex=5,
            cex=5)
 
+nrow(pdata[which(pdata$Biological.Specimen=="Chorion" & pdata$Diagnosis=="Healthy"),])
+
+nrow(pdata[which(pdata$Biological.Specimen=="Decidua" & pdata$Diagnosis=="Healthy"  & pdata$accession=="E-GEOD-60438"),])
+nrow(pdata[which(pdata$Biological.Specimen=="Decidua" & pdata$Diagnosis=="Healthy"  & pdata$accession=="E-GEOD-60438"),])
+
+95-65-18
+55-18-12
+
+12
 
 
+nrow(pdata)
 
 #literature global
 a = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE73374/GSE73374_literature.csv", header = TRUE, quote = '"', sep = ",")
@@ -29,6 +39,14 @@ b = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_f
 #merged
 c = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_data/3trim_placenta/3trim_placenta_symbol.tsv", header = TRUE, sep = "\t")
 
+
+
+a = read.table("/home/sashkoah/a/r/igea-r/73685_60438_chor_dec/diff_exp_full", header = TRUE, quote = '"', sep = "\t")
+b = read.table("/home/sashkoah/a/r/igea-r/73685_60438_chor_dec/diff_exp_50", header = TRUE, quote = '"', sep = "\t")
+c = read.table("/home/sashkoah/a/r/igea-r/73685_60438_chor_dec/diff_exp_75", header = TRUE, quote = '"', sep = "\t")
+nrow(a)
+nrow(b)
+nrow(c)
 # my gse
 d = read.table()
 
@@ -40,8 +58,9 @@ length(local_literature)
 
 
 
-
-
+14+24+22
+24+22+6
+22+6+16
 
 
 
@@ -51,13 +70,19 @@ length(local_literature)
 # Sys.getenv("R_MAX_NUM_DLLS")
 
 library(RAM)
-studies
 
 group.venn(list(Literature=global_literature,GSE73374=local_literature,  merged_data=merged), label=FALSE,
-           fill = c("orange", "blue"),
+           fill = c("orange", "blue")
            # cat.pos = c(0, 0,0),
            lab.cex=36,
            cex=5)
+
+group.venn(list(full=a$SYMBOL, fifty=b$SYMBOL, seventy_five=c$SYMBOL), label=FALSE,
+           fill = c("orange", "blue", "green"),
+           # cat.pos = c(0, 0,0),
+           lab.cex=36,
+           cex=5)
+
 
 # group.venn(list(chorion_genes=chorion_genes,
 #                 decidua_genes=decidua_genes,

@@ -84,7 +84,9 @@ getUniqueProbesetsTxt <- function(exprs) {
   probesetsID <- rownames(exprs)
   # probesetsID_EntrezID<-select(get(paste(platform, ".db", sep="")), probesetsID, "ENTREZID")
   # file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/HumanWG-6_V3_0_R3_11282955_A_probe_id_entrez.txt', header = TRUE, sep = "\t")
-  file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-930.adf_Illumina_Human-6_v2_Expression BeadChip_probe_id_entrez.txt', header = TRUE, sep = "\t")
+  file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-1172.adf_Illumina_HumanRef_8_v3.0_Expression_BeadChip.txt', header = TRUE, sep = "\t")
+  
+  # file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-930.adf_Illumina_Human-6_v2_Expression BeadChip_probe_id_entrez.txt', header = TRUE, sep = "\t")
   
   probesetsID_EntrezID<-file.txt
   

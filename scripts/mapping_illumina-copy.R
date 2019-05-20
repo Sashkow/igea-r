@@ -1,6 +1,8 @@
 # install.packages("BiocManager")
 # if (!requireNamespace("BiocManager", quietly = TRUE))
 #   install.packages("BiocManager")
+
+
 library(stringr)
 source('/home/sashkoah/a/r/igea-r/scripts/aln_illumina/degs_utils.R')
 
@@ -8,6 +10,7 @@ source('/home/sashkoah/a/r/igea-r/scripts/aln_illumina/degs_utils.R')
 library(illuminaHumanv4.db)
 
 setwd('/home/sashkoah/a/r/igea-r')
+
 
 getwd()
 
@@ -29,8 +32,10 @@ igea = read.table('igea_tsv/samples.tsv',header = TRUE, sep = '\t', fill = TRUE)
 
 # 60438_preprocessed_illumina_1.tsv - illuminaHumanv4.db
 # 60438_preprocessed_illumina_2.tsv - illuminaHumanv4.db
+ncol(sub_exprs)
 
 exprs_path = "/home/sashkoah/a/r/igea-r/preprocessed/illumina/E-GEOD-30186_preprocessed_illumina.tsv"
+
 exprs_filename = basename(exprs_path)
 exprs_filename = str_replace(exprs_filename,'\\.tsv','_mapped\\.tsv') 
 exprs_filename
@@ -38,6 +43,7 @@ exprs_filename
 exprs = read.table(exprs_path, header = TRUE, sep = "\t", quote = '"')
 # rownames(exprs) = exprs$Reporter.Identifier
 # colnames(exprs)
+exprs= sub_exprs
 
 
 # drops <- c("X","merged", "Reporter.Identifier")
@@ -48,8 +54,8 @@ nrow(exprs)
 # exprs.save = exprs
 # map probes to engrez gene identifiers in exprs
 
-file.db = illuminaHumanv4.db
 
+file.db = illuminaHumanv4.db
 
 file.db
 
@@ -60,14 +66,68 @@ exprs = getUniqueProbesets(exprs,"illuminaHumanv4")
 # if no .db file provided
 # file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/HumanWG-6_V3_0_R3_11282955_A_probe_id_entrez.txt', header = TRUE, sep = "\t")
 # file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-930.adf_Illumina_Human-6_v2_Expression BeadChip_probe_id_entrez.txt', header = TRUE, sep = "\t")
-# 
-# exprs = getUniqueProbesetsTxt(exprs)
+# file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-1172.adf_Illumina_HumanRef_8_v3.0_Expression_BeadChip.txt', header = TRUE, sep = "\t")
+file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/GPL10558_HumanHT-12_V4_0_R1_15002873_B.txt', header = TRUE, sep = "\t", fill = TRUE)
+
+# change file.txt inside this function before using
+exprs = getUniqueProbesetsTxt(exprs)
+
+require(WGCNA)
+## Get probeset to entrezid mapping
+probesetsID <- rownames(exprs)
+# probesetsID_EntrezID<-select(get(paste(platform, ".db", sep="")), probesetsID, "ENTREZID")
+# file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/HumanWG-6_V3_0_R3_11282955_A_probe_id_entrez.txt', header = TRUE, sep = "\t")
+# file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-1172.adf_Illumina_HumanRef_8_v3.0_Expression_BeadChip.txt', header = TRUE, sep = "\t")
+file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/GPL10558_HumanHT-12_V4_0_R1_15002873_B.txt', header = TRUE, sep = "\t", fill = TRUE)
+
+# file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-930.adf_Illumina_Human-6_v2_Expression BeadChip_probe_id_entrez.txt', header = TRUE, sep = "\t")
+
+probesetsID_EntrezID<-file.txt
+
+## Replace probesetsIDs with gene IDs in expression data matrix
+
+# Exclude NA probesets
+probesetsID_EntrezID <- probesetsID_EntrezID[which(probesetsID_EntrezID$ENTREZID!="NA"),]
+# Exclude probesets mapped to different genes simultaneously
+n_occur <- data.frame(table(probesetsID_EntrezID$PROBEID))
+uniques <- n_occur[n_occur$Freq == 1,]$Var1
+probesetsID_EntrezID <- probesetsID_EntrezID[which(probesetsID_EntrezID$PROBEID %in% uniques),]
+nrow(probesetsID_EntrezID)
+# Filter expression matrix based on left probesets
+exprs1 <- exprs[which(rownames(exprs) %in% probesetsID_EntrezID$PROBEID),]
+probesetsID_EntrezID = probesetsID_EntrezID[which(probesetsID_EntrezID$PROBEID %in% rownames(exprs1)),] 
+nrow(exprs1)
+nrow(probesetsID_EntrezID)
 
 
-probeset_ids = as.character(rownames(exprs))
-length(probeset_ids)
+exprs = exprs1
+# Select one probeset among the probesets mapped to the same gene based on maximum average value across the samples
+collapsed = collapseRows(exprs, probesetsID_EntrezID$ENTREZID, probesetsID_EntrezID$PROBEID, method="MaxMean")  
+exprs <- collapsed$datETcollapsed
 
-exprs_filename
+
+#done
+sub_exprs = exprs
+nrow(sub_pdata)
+ncol(sub_exprs)
+
+i=3
+studies[i,]$secondaryaccession
+
+exprs_file_name = paste(studies[i,]$secondaryaccession,"mapped_exprs.tsv", sep = "_")
+pdata_file_name = paste(studies[i,]$secondaryaccession,"mapped_pdata.tsv", sep = "_")
+exprs_path = file.path(mappedpath,studies[i,]$secondaryaccession)
+if (! dir.exists(exprs_path)){
+  dir.create(exprs_path, recursive = TRUE)
+}
+write.table(sub_exprs, file.path(exprs_path,exprs_file_name), sep = "\t", quote = FALSE)
+write.table(sub_pdata, file.path(exprs_path,pdata_file_name), sep = "\t", quote = FALSE)
+
+
+
+
+write.table(exprs, "/home/sashkoah/a/r/igea-r/mapped/smoking/E-GEOD-27272_mapped_exprs.tsv", sep="\t", quote=FALSE)
+
 write.table(exprs, file.path(mappedpath, exprs_filename), sep="\t", quote=FALSE)
 # write.table(illuminaHumanv4.db, file.path(mappedpath, "exprs_filename"), sep="\t", quote=FALSE)
 

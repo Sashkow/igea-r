@@ -27,11 +27,15 @@ plotsqcpath = paste(getwd(), 'plots/qc', sep='/')
 
 path = file.path(rawspath, studies[i,]$accession)
 path
-pdata = read.table(path, 
-                   sep="\t", head=TRUE, stringsAsFactors = FALSE)
+
+#in preprocessint_illumina.R
+pdata = pd
+# pdata = read.table(path, 
+#                    sep="\t", head=TRUE, stringsAsFactors = FALSE)
+paste("../pdata/", studies[i,]$ID, "_pdata_untracked.csv")
 raw.data <- readIllumina(dir=path, sampleSheet=paste("../pdata/", studies[i,]$ID, "_pdata_untracked.csv", sep=""),
                      illuminaAnnotation="Humanv3")
-readSampleSheet
+
 ### Normalize and QC
 
 ## P95 and P05 scores ratio

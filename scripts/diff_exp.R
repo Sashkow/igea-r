@@ -7,7 +7,6 @@ nrow(sub_pdata)
 ncol(sub_exprs)
 
 
-
 colnames(sub_exprs) == sub_pdata$Array.Data.File
 
 
@@ -16,9 +15,10 @@ colnames(sub_exprs) == sub_pdata$Array.Data.File
 # i=7
 # exprs = read.table(paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix.tsv", sep=""), sep="\t", header=TRUE, row.names = 1 )
 
-write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
+# write.table(sub_pdata,"sub_pdata.tsv", sep="\t", quote=FALSE)
+# 
+# sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
 
-sub_pdata = read.table("sub_pdata.tsv", sep="\t", header=TRUE)
 propercolnames = as.character(make.names(sub_pdata$Array.Data.File))
 
 colnames(sub_exprs) = as.character(colnames(sub_exprs))
@@ -43,8 +43,11 @@ write.table(sub_pdata, "sub_pd.tsv", sep="\t", quote=FALSE)
 
 
 # contrast.matrix <- makeContrasts(b-a,c-b,c-a, levels=fit_mod)
+sub_pdata$smoking.status.ch1
+fit_mod = model.matrix(~ 0 + as.factor(Biological.Specimen), data=sub_pdata)
+fit_mod = model.matrix(~ 0 + as.factor(sub_pdata$smoking.status.ch1), data=sub_pdata)
 
-fit_mod = model.matrix(~ 0 + as.factor(trim), data=sub_pdata)
+
 
 colnames(fit_mod)
 colnames(fit_mod) = c('a','b')
@@ -58,7 +61,7 @@ efit <- eBayes(fit2)        # empirical Bayes adjustment
 
 t = topTable(efit, number = nrow(sub_exprs))
 t = t[order(-abs(t$logFC)),]
-
+t
 
 
 d = t
@@ -66,19 +69,38 @@ d = t
 nrow(d)
 d$adj.P.Val
 d = d[d$adj.P.Val<.05,]
-nrow(d)
+d = d[d$P.Value<.05,]
 
-diff = d[abs(d$logFC)>2,]
+nrow(d)
+d
+diff = d[abs(d$logFC)>.5,]
 nrow(diff)
+diff
 library(org.Hs.eg.db)
 sel = AnnotationDbi::select(org.Hs.eg.db, rownames(diff), c("SYMBOL","GENENAME"))
 nrow(sel)
 sel
 
+nrow(sub_exprs)
+#dedicua - chorion
+
+write.table(sel, "/home/sashkoah/a/r/igea-r/smoking_diff_exp/three_studies.tsv", sep = '\t', quote=TRUE)
+
+sel_full = read.table("/home/sashkoah/a/r/igea-r/73685_60438_chor_dec/diff_exp_full", sep = '\t', quote='"')
+sel_full
+nrow(sel)
+nrow(sel_full)
+52-44
+
+
+setdiff(sel$SYMBOL, sel_full$SYMBOL)
+
+
 specimen = levels(sub_pdata$Biological.Specimen)[1]
 
 trims = str_replace_all(paste(levels(as.factor(sub_pdata$trim)), collapse = '__'), ' ', '_')
 filename = paste(specimen,trims, sep='__')
+
 filename
 write.table(sel, file.path('healthy_diff_lists_2019',filename), sep = '\t', quote=TRUE)
 nrow(sel)

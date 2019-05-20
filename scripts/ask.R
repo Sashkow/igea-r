@@ -1,5 +1,6 @@
-# BiocManager::install("dplyr")
+# BiocManager::install("Rtsne")
 library(Rtsne)
+
 library(affy) 
 library(ArrayExpress)
 library(arrayQualityMetrics)
@@ -21,31 +22,36 @@ mrgd = read.table(file.path("temp", "mrgd.tsv"), sep="\t", header=TRUE)
 pdata = read.table(file.path("temp","pdata.tsv"), sep="\t", header=TRUE)
 
 
-# pdata = read.table(, sep="\t", header=TRUE)
+ncol(mrgd)
+nrow(pdata)
+
+
+# pdata = read.table('home/sashkoah/a/r/igea-r/pure_mixed/igea-cibersort-python/73685_60438/combined_re.csv', sep="\t", header=TRUE)
 
 # pdata = read.table(file.path("temp","pdata.csv"), sep=",", header=TRUE)
-pdata$Array.Data.File = pdata$Expression.Data.ID
-
+# pdata$Array.Data.File = pdata$Expression.Data.ID
 mrgd
-columns = c('Diagnosis',
-            'Gestational.Age.Category',
-            'accession',
-            'Biological.Specimen',
-            'Array.Data.File',
-            'Gestational.Age', 
-            "exprs_column_names",
-            "platform_batch",
-            "arraydatafile_exprscolumnnames", # column with expression data sample names
-            "Fetus.Sex",
-            "Gravidity",
-            "Parity",
-            "medical_sample_name",
-            "Caesarean.Section")
+# columns = c('Diagnosis',
+#             'Gestational.Age.Category',
+#             'accession',
+#             'Biological.Specimen',
+#             'Array.Data.File',
+#             'Gestational.Age', 
+#             "exprs_column_names",
+#             "platform_batch",
+#             "arraydatafile_exprscolumnnames", # column with expression data sample names
+#             "Fetus.Sex",
+#             "Gravidity",
+#             "Parity",
+#             "medical_sample_name",
+#             "Caesarean.Section")
+# 
+# # align metadata in pdata and expression data in mrgd so that rows in pdata match cols in mrgd
+# pdata = pdata[,columns]
 
-# align metadata in pdata and expression data in mrgd so that rows in pdata match cols in mrgd
-pdata = pdata[,columns]
-pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
-
+pdata$Biological.Specimen
+# pdata$Array.Data.File = pdata$arraydatafile_exprscolumnnames
+# pdata$Array.Data.File = pdata$Input.Sample
 propercolnames = as.character(make.names(pdata$Array.Data.File))
 
 rownames(pdata) = propercolnames
@@ -66,22 +72,27 @@ pdata$Biological.Specimen
 
 # remove technical batch effect caused by different datasets 
 batch = as.factor(pdata$accession)
-batch = as.factor(pdata$Batch)
-
+batch = as.factor(pdata$secondaryaccession)
+# batch = as.factor(pdata$Batch)
+pdata$smoking.status.ch1
 # mod = model.matrix(~ as.factor(Gestational.Age.Category) + as.factor(Diagnosis), data=pdata)
 # mod = model.matrix(~as.factor(Gestational.Age.Category), data=pdata)
-mod = model.matrix(~1)
-nrow(mrgd)
-mrgd1 <- mrgd[rowSums(mrgd) > 1, ]
-nrow(mrgd1)
-exprs = ComBat(dat=as.matrix(mrgd1), batch=batch, mod=NULL, par.prior=TRUE, prior.plots=TRUE)
+mod = model.matrix(~as.factor(smoking.status.ch1), data=pdata)
+colnames(mrgd) == rownames(pdata)
+mod
+# mod = model.matrix(~1)
 
-exprs_nopare
+# nrow(mrgd)
+# mrgd1 <- mrgd[rowSums(mrgd) > 1, ]
+# nrow(mrgd1)
+exprs = mrgd
+exprs = ComBat(dat=as.matrix(mrgd), batch=batch, mod=mod, par.prior=TRUE, prior.plots=FALSE)
 
 # set trim: First Trimester, Second Trimester, Third Trimester
 pdata$trim = with(pdata, ifelse(Gestational.Age.Category == "Term" | Gestational.Age.Category == "Late Preterm" | Gestational.Age.Category == "Early Preterm", "Third Trimester", as.character(Gestational.Age.Category)))
 sub_pdata = pdata
 nrow(pdata)
+ncol(exprs)
 sub_exprs = exprs
 
 
@@ -91,9 +102,17 @@ sub_exprs = exprs
 # sub_pdata[which(sub_pdata$arraydatafile_exprscolumnnames %in% outlier_elements),]$is_outlier = TRUE
 
 sub_pdata = pdata[which(pdata$Diagnosis=="Healthy"),]
+sub_pdata = pdata[pdata$secondaryaccession=="GSE27272",]
+
+sub_pdata = sub_pdata[which(sub_pdata$accession=='E-GEOD-73685' | sub_pdata$Decidua>.75),]
+# sub_pdata = sub_pdata[which(sub_pdata$accession == "E-GEOD-73685"),]
+sub_pdata$accession
+                              
+# sub_pdata = sub_pdata[which(sub_pdata$`tissue:ch1`=="term placenta"),]
 # sub_pdata = pdata[which(!(pdata$Array.Data.File %in% c("B1_Cell_2", "B1_Cell_5", "B2_Cell_29"))),]
 nrow(sub_pdata)
 # sub_pdata = pdata[which(pdata$Diagnosis=="Healthy" & 
+
 #                           pdata$trim=='Third Trimester' & 
 #                           pdata$Biological.Specimen!="Umbilical Cord Blood" &
 #                           pdata$Biological.Specimen!="Maternal Blood" &
@@ -102,7 +121,8 @@ nrow(sub_pdata)
 #                           pdata$Biological.Specimen!="Uterus Fundus"),]
 # sub_pdata = pdata[which(pdata$Diagnosis=="Pre-Eclampsia"),]
 
-# 
+#
+exprs = mrgd
 source('scripts/sub_pd_to_sub_exprs.R')
 
 ncol(sub_exprs) 
@@ -110,11 +130,12 @@ nrow(sub_pdata)
 
 # how many samples in each dataset
 as.data.frame(table(sub_pdata$accession))[all_studies$accession,]
+as.data.frame(table(sub_pdata$secondaryaccession))
 
 
 
 # # sort of takes sub_pdata and sub_exprs as inputs
-source('scripts/diff_exp.R')
+# source('scripts/diff_exp.R')
 
 
 
@@ -161,10 +182,6 @@ source(paste(getwd(),'scripts/plots.R',sep='/'))
 # colnames(sub_exprs) = lookUp(as.character(colnames(sub_exprs)), 'org.Hs.eg', 'SYMBOL') if 
 # sub_exprs = sub_exprs[which(colnames(sub_exprs)!=NA),]
 # length(colnames(sub_exprs)==NA)
-
-pca = prcomp(t(sub_exprs))
-pca = prcomp(t(sub_exprs[X$SD>800,]))
-pca = prcomp(t(log2(sub_exprs + 1)))
 
 
 minrows
@@ -239,24 +256,48 @@ minrows
 # sub_pdata[,]
 # s
 # ncol(pca_df)
+sub
 
+pca = prcomp(t(na.omit(mrgd)))
+pca = prcomp(t(na.omit(exprs)))
+
+t(na.omit(sub_exprs))
 
 pca = prcomp(t(sub_exprs))
+
 pca = prcomp(t(sub_exprs[X$SD>800,]))
 pca = prcomp(t(log2(sub_exprs + 1)))
 
+pca_df = as.data.frame(pca$x)
+pl = plot(pca_df$PC1,pca_df$PC2)
+pl
+sub_pdata$evt5
 
 pl = fviz_pca_ind(pca, axes = c(1,2),
                       label=c("none"),
-                      # habillage=sub_pdata$Biological.Specimen,
+                      habillage=sub_pdata$smoking.status.ch1,
                       # repel = TRUE,
-                      title = "GEOD-60438 and GEOD-73685",
-                      palette = "Set3",
+                      title = "GSE18044, GSE27272 and GSE7434",
+                      palette = "Set4"
                       # addEllipses = TRUE,
+                      # col.ind = sub_pdata$evt5,
+                      # gradient.cols = rainbow(3)
                   
-                   
-) + geom_point(aes(colour=as.character(sub_pdata$Cluster)), size=2)
+          
+) 
 pl
+nrow(pdata[which(pdata$accession=="E-GEOD-60438" & pdata$Diagnosis=="Healthy"),])
+nrow(sub_pdata[sub_pdata$accession=="E-GEOD-60438",])
+
+
+these = sub_pdata[sub_pdata$accession=='E-GEOD-60438',]
+these
+View(sub_pdata)
+# pdata[which(pdata$accession=='E-GEOD-60438' & pdata$Biological.Specimen,]
+# + geom_point(aes(colour=as.character(sub_pdata$Biological.Specimen)), size=2)
+pl
+
+
 
 summary(pca)
 
@@ -312,12 +353,15 @@ iris_matrix = t(as.matrix(sub_exprs[X$SD>800,]))
 
 iris_matrix = t(as.matrix(log(sub_exprs+1)))
 
+iris_matrix = t(as.matrix(na.omit(sub_exprs)))
+
+pca = prcomp(t(na.omit(mrgd)))
 # Set a seed if you want reproducible results
 set.seed(42)
-tsne_out <- Rtsne(iris_matrix,perplexity=4,theta=0.0, normalize = FALSE) # Run TSNE
+tsne_out <- Rtsne(iris_matrix,perplexity=40,theta=0.0, normalize = FALSE) # Run TSNE
 
 # Show the objects in the 2D tsne representation
-plot(tsne_out$Y, col=sub_pdata$Cluster)
+plot(tsne_out$Y, col=sub_pdata$smoking.status.ch1)
 
 set.seed(007)
 X <- sub_exprs
@@ -421,9 +465,9 @@ getwd()
 arrayQualityMetrics::arrayQualityMetrics(
   eset,
   do.logtransform = FALSE,
-  outdir = "cell_types3",
+  outdir = "smoking",
   force = TRUE,
-  intgroup = 'Cluster'
+  intgroup = 'secondaryaccession'
 )
 
 sub_pdata$Array.Data.File
