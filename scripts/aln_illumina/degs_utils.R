@@ -51,14 +51,18 @@ filterDEGS <- function(degs, pval, fc, adj) {
   return (degs)
 }
 
+platform = "illuminaHumanv3"
+
 getUniqueProbesets <- function(exprs, platform) {
   require(WGCNA)
   ## Get probeset to entrezid mapping
   
-  
+  library(org.Hs.eg.db)
   probesetsID <- rownames(exprs)
+  probesetsID
   probesetsID_EntrezID<-select(get(paste(platform, ".db", sep="")), probesetsID, "ENTREZID")
-  
+  probesetsID_EntrezID<-select(org.Hs.eg.db, probesetsID, "ENTREZID")
+
   ## Replace probesetsIDs with gene IDs in expression data matrix
   
   # Exclude NA probesets
@@ -89,28 +93,35 @@ getUniqueProbesetsTxt <- function(exprs) {
   # file.txt = read.table('/home/sashkoah/a/r/igea-r/annotations/illumina/A-MEXP-930.adf_Illumina_Human-6_v2_Expression BeadChip_probe_id_entrez.txt', header = TRUE, sep = "\t")
   
   probesetsID_EntrezID<-file.txt
-  
+  probesetsID_EntrezID$PROBEID = probesetsID_EntrezID$Reporter.Name
+  probesetsID_EntrezID$ENTREZID = probesetsID_EntrezID$Reporter.Database.Entry.entrez.
   ## Replace probesetsIDs with gene IDs in expression data matrix
   
   # Exclude NA probesets
   probesetsID_EntrezID <- probesetsID_EntrezID[which(probesetsID_EntrezID$ENTREZID!="NA"),]
   # Exclude probesets mapped to different genes simultaneously
   n_occur <- data.frame(table(probesetsID_EntrezID$PROBEID))
+  n_occur
   uniques <- n_occur[n_occur$Freq == 1,]$Var1
   probesetsID_EntrezID <- probesetsID_EntrezID[which(probesetsID_EntrezID$PROBEID %in% uniques),]
   nrow(probesetsID_EntrezID)
   # Filter expression matrix based on left probesets
   exprs1 <- exprs[which(rownames(exprs) %in% probesetsID_EntrezID$PROBEID),]
+  
   probesetsID_EntrezID = probesetsID_EntrezID[which(probesetsID_EntrezID$PROBEID %in% rownames(exprs1)),] 
   nrow(exprs1)
   nrow(probesetsID_EntrezID)
   
   
   exprs = exprs1
+  rownames(exprs)
   # Select one probeset among the probesets mapped to the same gene based on maximum average value across the samples
   collapsed = collapseRows(exprs, probesetsID_EntrezID$ENTREZID, probesetsID_EntrezID$PROBEID, method="MaxMean")  
+  collapsed
   exprs <- collapsed$datETcollapsed
-  
+  rownames(exprs)
+  nrow(exprs)
+  exprs
   return(exprs)
 }
 

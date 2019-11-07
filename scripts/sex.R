@@ -1,22 +1,31 @@
 sexpath = 'sex/affymetrix'
 
 # Load studies description
-studies <- read.table("general/affymetrix_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
-i = 9
+dir("general")
+studies <- read.table("general/illumina_placenta_studies.tsv", header = TRUE, sep = "\t", fill=TRUE)
+studies[5,]
 
+i = 5
 # i = 8 pr
 
+paste(mappedpath, '/', studies$accession[[i]])
 
 exprs = read.table(paste(mappedpath, '/', studies$accession[[i]], "_mapped_affymetrix.tsv", sep=""), header = TRUE, sep = '\t')
+exprs = read.table("/home/sashkoah/a/r/igea-r/mapped/illumina/E-GEOD-30186_preprocessed_illumina_mapped.tsv", header = TRUE, sep = '\t')
+
 
 
 library(biomaRt)
 mart <- useMart('ensembl', dataset="hsapiens_gene_ensembl")
+
 filters <- listFilters(mart)
+
 attributes <- listAttributes(mart)
 
 platfrom_abbreviation = as.character(studies[i,]$martPlatformAbbr)
+platfrom_abbreviation = "illumina_humanht_12_v4"
 platfrom_abbreviation_with = paste("with_", platfrom_abbreviation, sep ="")
+platfrom_abbreviation_with = "with_illumina_humanht_12_v4"
 
 gene.attributes <-
   getBM(mart=mart, values=TRUE,
@@ -37,12 +46,13 @@ length(intersect(rownames(exprs), all_genes))
 
 
 library(massiR)
+# nBiocManager::install("massiR")
 
 
 
 y = intersect(rownames(exprs), all_genes)
 
-View(exprs[all_genes,])
+exprs[all_genes,]
 
 genes.df = data.frame(matrix(, nrow=length(all_genes), ncol=0))
 rownames(genes.df) = all_genes
@@ -71,10 +81,10 @@ nrow(massi.select.out)
 
 results <- massi_cluster(massi.select.out)
 
-results[[2]]
+View(results[[2]])
 
 massi_cluster_plot(massi.select.out, results)
-
+paste(sexpath, '/', studies$accession[[i]], "_sex.tsv", sep="")
 write.table(results[[2]], paste(sexpath, '/', studies$accession[[i]], "_sex.tsv", sep=""), sep="\t", quote=FALSE)
 
 

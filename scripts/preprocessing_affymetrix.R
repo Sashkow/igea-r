@@ -1,5 +1,5 @@
 # Load HuGene and hgu133 BrainArray packages
-# source("https://bioconductor.org/biocLite.R")
+source("https://bioconductor.org/biocLite.R")
 # biocLite("BiocUpgrade")
 # BiocManager::install("erer")
 # BiocManager::install("affycoretools")
@@ -17,8 +17,10 @@
 # BiocManager::install("arrayQualityMetrics")
 # 
 # BiocManager::install("factoextra")
-BiocManager::install("hgu133plus2hsentrezg")
-"hgu133plus2.db", version = "3.8"
+# BiocManager::install("hgu133plus2hsentrezg")
+# BiocManager::install("RAM")
+
+# "hgu133plus2.db", version = "3.8"
 
 library(factoextra)
 library(ArrayExpress)

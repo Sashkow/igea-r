@@ -140,7 +140,7 @@ rownames(exprs)
 t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
 
 t = read.table("/home/sashkoah/a/r/article-microarrays/differential_expression_from_literature/GSE9984/NIHMS101231-supplement-Suppl_3.csv", header = TRUE, sep = "\t", quote = '"')
-
+exprs = read.table('/home/sashkoah/a/r/igea-r/preprocessed/illumina/GSE27272/E-GEOD-27272_Placenta_all_groups_QN.csv', header = TRUE, sep = '\t') 
 
 probeset_ids = as.character(rownames(exprs))
 length(probeset_ids)
@@ -266,6 +266,14 @@ sub_pdata
 sub_exprs = read.table("/home/sashkoah/a/r/igea-r/preprocessed/illumina/GSE18044/GSE18044_QN.csv", sep = ',', quote = '"', header = TRUE, row.names = "X")
 sub_pdata = read.table("/home/sashkoah/a/r/igea-r/preprocessed/illumina/GSE18044/GSE18044_preprocessed_pdata.tsv", sep = '\t', quote = '"', header = TRUE)
 
+colnames(sub_exprs)
+rownames(sub_pdata) = sub_pdata$Array.Data.File
+rownames(sub_pdata)
+
+eset = ExpressionSet(as.matrix(sub_exprs))
+eset@phenoData = AnnotatedDataFrame(sub_pdata)
+
+
 pca = prcomp(t(sub_exprs))
 summary(pca)
 library(factoextra)
@@ -279,16 +287,14 @@ pl = fviz_pca_ind(pca, axes = c(1,2),
                   # addEllipses = TRUE,
                   # col.ind = sub_pdata$evt5,
                   # gradient.cols = rainbow(3)
-                  
-                  
 ) 
 pl
 
 View(pdata)
 studies
-sub_pdata$`status:ch1`
-arrayQualityMetrics::arrayQualityMetrics(lumi.N, outdir = '/home/sashkoah/a/r/igea-r/smoking_3_norm',
-                                          intgroup = "status:ch1",
+sub_pdata$mode.of.delivery.ch1
+arrayQualityMetrics::arrayQualityMetrics(eset, outdir = '/home/sashkoah/a/r/igea-r/smoking_3_norm_vsevolod_mode',
+                                          intgroup = "mode.of.delivery.ch1",
                                          do.logtransform = FALSE,
                                          force=TRUE)
 colnames(pdata)
